@@ -3,10 +3,13 @@
   "owner": {
     "name": "lollipopkit"
   },
+  "metadata": {
+    "description": "Marketplace for the rlm plugin (Recursive Language Model skill)"
+  },
   "plugins": [
     {
       "name": "rlm",
-      "source": ".",
+      "source": "./plugins/rlm",
       "description": "Recursive Language Model - multi-pass reasoning with Self-Refine, Reflexion, Tree of Thoughts"
     }
   ]

@@ -13,8 +13,5 @@
     "iterative",
     "recursive"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lollipopkit/rlm-skill"
-  }
+  "repository": "https://github.com/lollipopkit/rlm-skill"
 }

@@ -94,14 +94,18 @@ rlm-skill/
 
 ## Research References
 
-| Technique | Paper | Year |
-| ----------- | ------- | ------ |
-| Self-Refine | Madaan et al. | 2023 |
-| Reflexion | Shinn et al. | 2023 |
-| Tree of Thoughts | Yao et al. | 2023 |
-| Self-Consistency | Wang et al. | 2023 |
-| Constitutional AI | Anthropic | 2022 |
-| Least-to-Most | Zhou et al. | 2022 |
+| Technique | Paper | Venue/Year |
+| ----------- | ------- | ----------- |
+| PRefLexOR | Preference-Based Recursive Language Models | Nature 2025 |
+| SSR | Socratic Self-Refine for LLM Reasoning | arXiv 2025 |
+| Self-Refinement | Learning to Refine: Parallel Reasoning in LLMs | OpenReview 2025 |
+| Self-Reflection | Self-reflection enhances LLMs (Dual-loop) | Nature 2025 |
+| Recursive Reasoning | Tiny Recursive Models (Samsung TRM) | arXiv 2025 |
+| Self-Evolving Agents | Reframing Self-Evolving LLM Agents | arXiv 2026 |
+| Survey | A Comprehensive Survey on Latent Chain-of-Thought | arXiv 2025 |
+| Survey | A Survey of Reasoning Large Language Models | arXiv 2025 |
+| Survey | Empowering LLMs with Logical Reasoning | IJCAI 2025 |
+| Survey | A Survey of Chain-of-X Paradigms | COLING 2025 |
 
 ## License
 
