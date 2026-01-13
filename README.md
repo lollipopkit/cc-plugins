@@ -15,35 +15,39 @@ A Claude Code plugin that implements state-of-the-art recursive reasoning techni
 
 ### Option 1: Local Development
 
+Load the plugin directly from this repo (note the plugin root is `plugins/rlm/`):
+
 ```bash
-claude --plugin-dir /path/to/rlm-skill
+claude --plugin-dir /path/to/rlm-skill/plugins/rlm
 ```
 
-### Option 2: From GitHub
+### Option 2: From GitHub (Marketplace)
 
-First, add the marketplace:
+Add the marketplace repo:
 
 ```bash
-/plugin marketplace add lollipopkit/rlm-skill
+/plugin marketplace add lollipopkit/cc-rlm
 ```
 
-Then install the plugin:
+Install the plugin from the marketplace (explicit marketplace name):
 
 ```bash
-/plugin install rlm
-```
-
-### Option 3: Direct Git Install
-
-```bash
-/plugin install github:lollipopkit/rlm-skill
+/plugin install rlm@lk-rlm
 ```
 
 ## Usage
 
+### Skills
+
+This plugin provides multiple Skills:
+
+- `rlm`: recursive reasoning workflow (prompt-driven)
+- `arena`: multi-model battle runner via OpenAI-compatible endpoints (reads `.env`)
+- `rlm-arena`: orchestrates RLM iterations using arena as the generator
+
 ### Trigger Phrases
 
-The RLM skill activates automatically when you use phrases like:
+The `rlm` Skill activates automatically when you use phrases like:
 
 - "Use RLM to solve this"
 - "Think recursively about..."
@@ -51,6 +55,8 @@ The RLM skill activates automatically when you use phrases like:
 - "Deep think mode"
 - "Multi-pass reasoning"
 - "Self-refine this solution"
+
+The `arena` / `rlm-arena` Skills activate when you ask for "arena", "battle models", "compare models", or "rlm arena".
 
 ### Example
 
@@ -72,13 +78,24 @@ Claude: [Applies RLM workflow]
 ```text
 rlm-skill/
 ├── .claude-plugin/
-│   ├── plugin.json         # Plugin manifest
 │   └── marketplace.json    # Marketplace definition
-├── skills/
+├── plugins/
 │   └── rlm/
-│       ├── SKILL.md              # Main skill definition
-│       ├── advanced-techniques.md # Detailed methodology
-│       └── examples.md           # Example workflows
+│       ├── .claude-plugin/
+│       │   └── plugin.json       # Plugin manifest
+│       └── skills/
+│           ├── rlm/
+│           │   ├── SKILL.md
+│           │   ├── advanced-techniques.md
+│           │   └── examples.md
+│           ├── arena/
+│           │   ├── SKILL.md
+│           │   └── scripts/
+│           │       └── arena.py
+│           └── rlm-arena/
+│               ├── SKILL.md
+│               └── scripts/
+│                   └── rlm_arena.py
 └── README.md
 ```
 
