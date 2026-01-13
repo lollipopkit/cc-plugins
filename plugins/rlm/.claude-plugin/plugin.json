@@ -13,5 +13,10 @@
     "iterative",
     "recursive"
   ],
-  "repository": "https://github.com/lollipopkit/cc-rlm"
+  "repository": "https://github.com/lollipopkit/cc-rlm",
+  "license": "MIT",
+  "commands": "./commands/",
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "agents": "./agents/"
 }
