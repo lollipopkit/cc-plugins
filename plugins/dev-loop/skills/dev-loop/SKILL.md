@@ -50,6 +50,10 @@ Review:
 
 - `max_review_polls: 40`
 - `review_poll_seconds: 60`
+- `wait_behavior: "poll"|"ping_ai"`
+- `ai_reviewer_id: "..."` (e.g., `coderabbitai[bot]`)
+- `ping_message_template: "..."` (default: `@{{ai_id}} Why still blocking this PR?`)
+- `ping_threshold: 3` (number of wait rounds before pinging)
 
 Notifications (optional):
 
@@ -114,6 +118,8 @@ Notifications (optional):
      - DO NOT wait for user input between polls. Use the `Bash` tool with `sleep <seconds>` to wait autonomously.
      - Initial wait: 5 minutes (`sleep 300`).
      - Increase wait time by 1 minute each round if no new comments are found.
+     - Keep track of `wait_rounds_without_response`.
+     - If `wait_behavior` is `ping_ai` and `wait_rounds_without_response` reaches `ping_threshold`, post the configured ping message as a PR comment.
      - Stop polling and ask the user for guidance ONLY if the cumulative wait exceeds 30 minutes.
      - If new comments are found, immediately proceed to "Apply feedback" and reset the polling cycle.
 8. Apply feedback
