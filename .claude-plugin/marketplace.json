@@ -8,8 +8,8 @@
   },
   "plugins": [
     {
-      "name": "rlm",
-      "source": "./plugins/rlm",
+      "name": "recursive-reasoning",
+      "source": "./plugins/recursive-reasoning",
       "description": "Recursive Language Model - multi-pass reasoning with Self-Refine, Reflexion, Tree of Thoughts"
     },
     {
