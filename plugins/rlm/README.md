@@ -17,7 +17,7 @@ A Claude Code plugin that implements state-of-the-art recursive reasoning techni
 
 ```bash
 /plugin marketplace add lollipopkit/cc-plugins
-/plugin install rlm@lk-rlm
+/plugin install rlm@lk-ccp
 ```
 
 ## Usage

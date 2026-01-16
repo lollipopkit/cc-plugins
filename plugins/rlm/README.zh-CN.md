@@ -16,8 +16,8 @@
 ## 安装
 
 ```bash
-/plugin marketplace add lollipopkit/cc-rlm
-/plugin install rlm@lk-rlm
+/plugin marketplace add lollipopkit/cc-plugins
+/plugin install rlm@lk-ccp
 ```
 
 ## 使用
