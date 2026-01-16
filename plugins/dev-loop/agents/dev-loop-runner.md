@@ -120,20 +120,23 @@ Workflow (repeat until completion or blocked):
      ```
 
    - Polling Strategy (Autonomous):
-     1. Initialize `current_wait = 300` (5 minutes) and `cumulative_wait = 0`.
+     1. Initialize `current_wait = 60` (1 minute) and `cumulative_wait = 0`.
      2. In each round, poll for comments using the GraphQL query.
      3. If NO new comments are found:
         - If `cumulative_wait + current_wait > 1800` (30 minutes), stop polling and ask the user for guidance.
         - Otherwise, use the `Bash` tool to run `sleep $current_wait`.
         - After sleep, update `cumulative_wait += current_wait` and `current_wait += 60` (1 minute), then repeat from step 2.
      4. If new comments are found:
-        - Proceed to **Apply feedback** immediately and reset the polling cycle (initialize `current_wait = 300` and `cumulative_wait = 0`).
+        - Proceed to **Apply feedback** immediately and reset the polling cycle (initialize `current_wait = 60` and `cumulative_wait = 0`).
      - Example Sequence:
-       - Poll #1: No comments. Wait 5m (`current_wait`). `cumulative_wait` = 5m. Next `current_wait` = 6m.
-       - Poll #2: No comments. Wait 6m (`current_wait`). `cumulative_wait` = 11m. Next `current_wait` = 7m.
-       - Poll #3: No comments. Wait 7m (`current_wait`). `cumulative_wait` = 18m. Next `current_wait` = 8m.
-       - Poll #4: No comments. Wait 8m (`current_wait`). `cumulative_wait` = 26m. Next `current_wait` = 9m.
-       - Poll #5: No comments. Stop because `cumulative_wait + current_wait` (26m + 9m) > 30m.
+       - Poll #1: No comments. Wait 1m (`current_wait`). `cumulative_wait` = 1m. Next `current_wait` = 2m.
+       - Poll #2: No comments. Wait 2m (`current_wait`). `cumulative_wait` = 3m. Next `current_wait` = 3m.
+       - Poll #3: No comments. Wait 3m (`current_wait`). `cumulative_wait` = 6m. Next `current_wait` = 4m.
+       - Poll #4: No comments. Wait 4m (`current_wait`). `cumulative_wait` = 10m. Next `current_wait` = 5m.
+       - Poll #5: No comments. Wait 5m (`current_wait`). `cumulative_wait` = 15m. Next `current_wait` = 6m.
+       - Poll #6: No comments. Wait 6m (`current_wait`). `cumulative_wait` = 21m. Next `current_wait` = 7m.
+       - Poll #7: No comments. Wait 7m (`current_wait`). `cumulative_wait` = 28m. Next `current_wait` = 8m.
+       - Poll #8: No comments. Stop because `cumulative_wait + current_wait` (28m + 8m) > 30m.
 7. Apply feedback
    - Group comments by file/area, fix, commit, push.
 8. Notify
