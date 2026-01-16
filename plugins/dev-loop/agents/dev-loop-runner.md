@@ -125,7 +125,9 @@ Workflow (repeat until completion or blocked):
      3. If NO new comments are found:
         - Increment `wait_rounds_without_response`.
         - If `wait_behavior` is `ping_ai` and `wait_rounds_without_response` == `ping_threshold`:
-          - Post a comment to the PR using `gh pr comment --body \"<ping_message_template>\"` (replace `{{ai_id}}` with `ai_reviewer_id`).
+          - Post a comment to the PR:
+            1. Interpolate the `ping_message_template` by replacing `{{ai_id}}` with `ai_reviewer_id`.
+            2. Use `gh pr comment --body "$MESSAGE"` where `$MESSAGE` is the interpolated content, ensuring proper shell quoting/escaping (e.g. using a heredoc or body file if the message contains special characters).
         - If `cumulative_wait + current_wait > 1800` (30 minutes), stop polling and ask the user for guidance.
         - Otherwise, use the `Bash` tool to run `sleep $current_wait`.
         - After sleep, update `cumulative_wait += current_wait` and `current_wait += 60` (1 minute), then repeat from step 2.
