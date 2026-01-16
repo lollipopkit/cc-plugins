@@ -17,6 +17,5 @@
   "license": "MIT",
   "commands": "./commands/",
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json",
-  "agents": "./agents/"
+  "hooks": "./hooks/hooks.json"
 }
