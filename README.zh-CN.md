@@ -5,7 +5,7 @@
 ## 插件列表
 
 - `rlm`: 模拟递归语言模型 - 通过 Self-Refine、Reflexion、Tree of Thoughts 实现多轮推理。
-- `issue-loop`: 对一个 issue 进行迭代，直到准备好合并：修复、提交、打开 PR、等待 AI 审查、应用反馈、重复。
+- `dev-loop`: 对一个 issue 进行迭代，直到准备好合并：创建分支、修复、提交、打开 PR、等待 AI 审查、应用反馈、重复。
 
 各插件的具体文档位于各自的插件文件夹中。
 

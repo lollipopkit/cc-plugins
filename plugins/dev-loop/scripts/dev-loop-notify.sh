@@ -4,13 +4,13 @@ set -euo pipefail
 # Stop hook notification runner.
 #
 # Executes a user-provided notification command template from
-# `.claude/issue-loop.local.md` when `notify_enabled: true`.
+# `.claude/dev-loop.local.md` when `notify_enabled: true`.
 #
 # This script intentionally allows arbitrary user-configured commands.
 # Keep it gated behind explicit opt-in flags in the settings file.
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-SETTINGS_FILE="$PROJECT_DIR/.claude/issue-loop.local.md"
+SETTINGS_FILE="$PROJECT_DIR/.claude/dev-loop.local.md"
 
 if [[ ! -f "$SETTINGS_FILE" ]]; then
   exit 0
@@ -43,24 +43,24 @@ def s(v):
 def export(name, value):
     print(f"export {name}={shlex.quote(s(value))}")
 
-export("ISSUE_LOOP_EVENT_NAME", data.get("hook_event_name", ""))
-export("ISSUE_LOOP_REASON", data.get("reason", ""))
-export("ISSUE_LOOP_TRANSCRIPT_PATH", data.get("transcript_path", ""))
+export("DEV_LOOP_EVENT_NAME", data.get("hook_event_name", ""))
+export("DEV_LOOP_REASON", data.get("reason", ""))
+export("DEV_LOOP_TRANSCRIPT_PATH", data.get("transcript_path", ""))
 
 raw = json.dumps(data, ensure_ascii=False)
-export("ISSUE_LOOP_EVENT_JSON_B64", base64.b64encode(raw.encode("utf-8")).decode("ascii"))
+export("DEV_LOOP_EVENT_JSON_B64", base64.b64encode(raw.encode("utf-8")).decode("ascii"))
 PY
   )
   # shellcheck disable=SC1090
   eval "$EXPORTS"
 else
-  export ISSUE_LOOP_EVENT_NAME=""
-  export ISSUE_LOOP_REASON=""
-  export ISSUE_LOOP_TRANSCRIPT_PATH="${CLAUDE_TRANSCRIPT_PATH:-}"
-  export ISSUE_LOOP_EVENT_JSON_B64=""
+  export DEV_LOOP_EVENT_NAME=""
+  export DEV_LOOP_REASON=""
+  export DEV_LOOP_TRANSCRIPT_PATH="${CLAUDE_TRANSCRIPT_PATH:-}"
+  export DEV_LOOP_EVENT_JSON_B64=""
 fi
 
-export ISSUE_LOOP_PROJECT_DIR="$PROJECT_DIR"
+export DEV_LOOP_PROJECT_DIR="$PROJECT_DIR"
 
 # Extract YAML frontmatter between --- markers.
 #
@@ -101,14 +101,14 @@ if [[ -z "${notify_command_template:-}" ]]; then
 fi
 
 # A short default message; templates should prefer structured env vars.
-message="issue-loop stop event: ${ISSUE_LOOP_EVENT_NAME:-Stop} | project: $PROJECT_DIR"
-if [[ -n "${ISSUE_LOOP_REASON:-}" ]]; then
-  message="$message | reason: ${ISSUE_LOOP_REASON}"
+message="dev-loop stop event: ${DEV_LOOP_EVENT_NAME:-Stop} | project: $PROJECT_DIR"
+if [[ -n "${DEV_LOOP_REASON:-}" ]]; then
+  message="$message | reason: ${DEV_LOOP_REASON}"
 fi
-if [[ -n "${ISSUE_LOOP_TRANSCRIPT_PATH:-}" ]]; then
-  message="$message | transcript: ${ISSUE_LOOP_TRANSCRIPT_PATH}"
+if [[ -n "${DEV_LOOP_TRANSCRIPT_PATH:-}" ]]; then
+  message="$message | transcript: ${DEV_LOOP_TRANSCRIPT_PATH}"
 fi
-export ISSUE_LOOP_MESSAGE="$message"
+export DEV_LOOP_MESSAGE="$message"
 
 run_with_shell() {
   local shell_name="$1"
@@ -134,7 +134,7 @@ case "${notify_shell:-auto}" in
     ;;
   auto|*)
     if [[ -n "${notify_shell:-}" && "${notify_shell}" != "auto" && "${notify_shell}" != "bash" && "${notify_shell}" != "fish" ]]; then
-      echo "issue-loop-notify: unsupported notify_shell='${notify_shell}'; falling back to auto (bash then fish)" >&2
+      echo "dev-loop-notify: unsupported notify_shell='${notify_shell}'; falling back to auto (bash then fish)" >&2
     fi
 
     if command -v bash >/dev/null 2>&1; then

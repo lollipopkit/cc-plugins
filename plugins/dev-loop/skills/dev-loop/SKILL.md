@@ -1,10 +1,20 @@
 ---
-name: Issue Loop
-description: This skill should be used when the user asks to "run issue-loop", "fix this issue and open a PR", "auto commit and create a PR", "wait for AI code review and apply comments", or "iterate until merge-ready".
+name: Dev Loop
+description: This skill should be used when the user asks to "run dev-loop", "fix this issue and open a PR", "auto commit and create a PR", "wait for AI code review and apply comments", or "iterate until merge-ready".
 version: 0.1.0
 ---
 
-Run an iterative workflow that takes an issue/task input and drives it to a merge-ready pull request through repeated fix → commit → PR → review → apply feedback cycles.
+Run an iterative workflow that takes an issue/task input and drives it to a merge-ready pull request through repeated branch creation → fix → commit → PR → review → apply feedback cycles.
+
+## Mandatory Workflow
+
+1. **Create Branch**: Always start by creating a new descriptive branch based on the issue/task content.
+2. **Implement Fix**: Research and implement the smallest correct fix.
+3. **Commit**: Create a clear commit message.
+4. **Pull Request**: Open a PR for review.
+5. **Wait for Review**: Poll for AI or human review comments.
+6. **Address Feedback**: Apply changes based on review comments and commit/push again.
+7. **Repeat**: Iterate through cycles of review and feedback until the PR is approved or merged.
 
 ## Inputs
 
@@ -16,7 +26,7 @@ Accept one of:
 
 ## Settings and state
 
-Read `.claude/issue-loop.local.md` from the project root when present.
+Read `.claude/dev-loop.local.md` from the project root when present.
 
 - Parse YAML frontmatter to control behavior.
 - Treat markdown body as additional instructions to append to the working prompt.
@@ -71,7 +81,7 @@ Notifications (optional):
 
 When `review_mode` is not `github` and `llm_command_template` is configured:
 
-- Build a review prompt and export it as `ISSUE_LOOP_PROMPT`.
+- Build a review prompt and export it as `DEV_LOOP_PROMPT`.
 - Require the external tool to output a Markdown checklist (see format below).
 - Execute `llm_command_template` using `llm_shell`.
   - For `claude` CLI, use `-p/--print` and pass the prompt as the final argument.

@@ -4,7 +4,7 @@
     "name": "lollipopkit"
   },
   "metadata": {
-    "description": "Marketplace for lk plugins (rlm, issue-loop)"
+    "description": "Marketplace for lk plugins (rlm, dev-loop)"
   },
   "plugins": [
     {
@@ -13,9 +13,9 @@
       "description": "Recursive Language Model - multi-pass reasoning with Self-Refine, Reflexion, Tree of Thoughts"
     },
     {
-      "name": "issue-loop",
-      "source": "./plugins/issue-loop",
-      "description": "Iterate on an issue until it is ready to merge: fix, commit, open PR, wait for AI review, apply feedback, repeat."
+      "name": "dev-loop",
+      "source": "./plugins/dev-loop",
+      "description": "Iterate on an issue until it is ready to merge: create branch, fix, commit, open PR, wait for AI review, apply feedback, repeat."
     }
   ]
 }
