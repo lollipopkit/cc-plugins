@@ -119,7 +119,7 @@ Notifications (optional):
      - Initial wait: 5 minutes (`sleep 300`).
      - Increase wait time by 1 minute each round if no new comments are found.
      - Keep track of `wait_rounds_without_response`.
-     - If `wait_behavior` is `ping_ai` and `wait_rounds_without_response` reaches `ping_threshold`, post the configured ping message as a PR comment.
+     - If `wait_behavior` is `ping_ai` and `wait_rounds_without_response` reaches `ping_threshold`, post the configured ping message as a PR comment and reset `wait_rounds_without_response = 0` to avoid repeated pings.
      - Stop polling and ask the user for guidance ONLY if the cumulative wait exceeds 30 minutes.
      - If new comments are found, immediately proceed to "Apply feedback" and reset the polling cycle.
 8. Apply feedback
