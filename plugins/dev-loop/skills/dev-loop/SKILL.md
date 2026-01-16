@@ -8,7 +8,12 @@ Run an iterative workflow that takes an issue/task input and drives it to a merg
 
 ## Mandatory Workflow
 
-1. **Create Branch**: If on the base branch (e.g. `main`), create a new descriptive branch based on the issue/task content. If NOT on the base branch, check if the current branch is already associated with a different PR or issue; if a DIFFERENT association is detected, prompt the user to either switch to the base branch or explicitly confirm reusing the current branch. Otherwise, continue on the current branch.
+1. **Create Branch**:
+   - If on the base branch (e.g. `main`): Create a new descriptive branch based on the issue/task content.
+   - If NOT on the base branch:
+     - Check if the current branch is already associated with a different PR number or issue identifier.
+     - If a DIFFERENT association is detected: Prompt the user to either switch to the base branch or explicitly confirm reusing the current branch for the new task.
+     - Otherwise: Continue on the current branch.
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
@@ -59,8 +64,10 @@ Notifications (optional):
 1. Fetch issue context
    - Use `gh issue view` or `gh pr view` to get title/body and current status.
 2. Create branch
-   - If the current branch is the base branch, create a descriptive branch name and check it out.
-   - Otherwise, skip this step.
+   - Check if the current branch is the base branch (e.g. `main`).
+   - If NOT on the base branch, verify if the current branch is already associated with the target issue/PR.
+   - If associated with a DIFFERENT issue/PR, prompt the user to either switch to the base branch or explicitly confirm reusing the current branch.
+   - If creating a new branch, generate a descriptive branch name and check it out. Otherwise, use the chosen/confirmed existing branch.
 3. Implement minimal fix
    - Read only necessary files.
    - Avoid refactors not required for the fix.
@@ -74,7 +81,7 @@ Notifications (optional):
 7. Wait for AI review
    - Poll `gh pr view` / `gh api` for new comments, review state, and check runs.
    - Polling Strategy:
-     - Start with 5 minutes wait and 0 minutes cumulative wait.
+     - Initial wait: 5 minutes (cumulative wait starts at 0 and is updated after each wait period).
      - Increase wait time by 1 minute each round if no new comments are found.
      - Stop before performing a wait that would make cumulative wait exceed 30 minutes total for the current review cycle.
      - If new comments are found, solve them and reset the polling strategy for the next cycle.
