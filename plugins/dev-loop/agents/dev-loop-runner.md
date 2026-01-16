@@ -84,6 +84,7 @@ Workflow (repeat until completion or blocked):
    - Create a commit message derived from issue title.
 5. PR
    - Create PR if missing, else push updates.
+   - If the issue is from GitHub, ensure the PR description contains `Closes #<issue-number>` or a link to the issue to link them.
 6. Wait for review
    - Poll for new bot/AI review comments and review state.
    - Polling Strategy:
@@ -94,6 +95,12 @@ Workflow (repeat until completion or blocked):
         - Otherwise, wait for `current_wait`, then update `cumulative_wait += current_wait` and `current_wait += 1m`, and repeat from step 2.
      4. If new comments are found:
         - Reset `current_wait = 5m` and `cumulative_wait = 0m` for the next review cycle, and proceed to Apply feedback.
+     - Example Sequence:
+       - Poll #1: No comments. Wait 5m (`current_wait`). `cumulative_wait` = 5m. Next `current_wait` = 6m.
+       - Poll #2: No comments. Wait 6m (`current_wait`). `cumulative_wait` = 11m. Next `current_wait` = 7m.
+       - Poll #3: No comments. Wait 7m (`current_wait`). `cumulative_wait` = 18m. Next `current_wait` = 8m.
+       - Poll #4: No comments. Wait 8m (`current_wait`). `cumulative_wait` = 26m. Next `current_wait` = 9m.
+       - Poll #5: No comments. Stop because `cumulative_wait + current_wait` (26m + 9m) > 30m.
 7. Apply feedback
    - Group comments by file/area, fix, commit, push.
 8. Notify

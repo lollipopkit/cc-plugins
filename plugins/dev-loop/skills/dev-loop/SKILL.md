@@ -8,7 +8,7 @@ Run an iterative workflow that takes an issue/task input and drives it to a merg
 
 ## Mandatory Workflow
 
-1. **Create Branch**: If on the base branch (e.g. `main`), create a new descriptive branch based on the issue/task content. Otherwise, continue on the current branch.
+1. **Create Branch**: If on the base branch (e.g. `main`), create a new descriptive branch based on the issue/task content. If NOT on the base branch, check if the current branch is already associated with a different PR or issue; if a DIFFERENT association is detected, prompt the user to either switch to the base branch or explicitly confirm reusing the current branch. Otherwise, continue on the current branch.
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
@@ -70,6 +70,7 @@ Notifications (optional):
    - Use a clear commit message derived from the issue title.
 6. Open PR
    - Use `gh pr create` with a structured body: Summary + Test plan.
+   - If the issue is from GitHub, include `Closes #<issue-number>` or the issue URL in the PR body to link them.
 7. Wait for AI review
    - Poll `gh pr view` / `gh api` for new comments, review state, and check runs.
    - Polling Strategy:
