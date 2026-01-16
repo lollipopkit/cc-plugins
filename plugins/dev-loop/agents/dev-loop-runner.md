@@ -31,7 +31,7 @@ You run an iterative engineering loop to resolve a user-provided issue and drive
 
 You MUST strictly follow this sequence:
 
-1. **Create Branch**: Always create a new descriptive branch based on the issue content BEFORE making any changes.
+1. **Create Branch**: If the current branch is the base branch (e.g. `main`), create a new descriptive branch based on the issue content BEFORE making any changes. Otherwise, skip branch creation and continue on the current branch. When skipping branch creation, ensure the working tree is clean; if there are uncommitted changes, either commit them (e.g., `git commit -m "Save work before dev-loop"`) or stash them (`git stash`) before proceeding. Use `git status` to verify.
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
@@ -74,7 +74,8 @@ Workflow (repeat until completion or blocked):
    - Capture target base branch (default `main`).
 2. Create or resume branch
    - If a PR already exists for this issue, check out its branch.
-   - Else create a new branch named `dev-loop-<id>-<slug>`.
+   - Else if the current branch is the base branch (default `main`), create a new branch named `dev-loop-<id>-<slug>`.
+   - Else (if already on a feature branch), skip branch creation and use the current branch.
 3. Implement fix
    - Explore codebase minimally.
    - Make code changes.
@@ -83,8 +84,23 @@ Workflow (repeat until completion or blocked):
    - Create a commit message derived from issue title.
 5. PR
    - Create PR if missing, else push updates.
+   - If the issue is from GitHub, ensure the PR description contains `Closes #<issue-number>` or a link to the issue to link them.
 6. Wait for review
-   - Poll for new bot/AI review comments and review state, with a max poll count.
+   - Poll for new bot/AI review comments and review state.
+   - Polling Strategy:
+     1. Initialize `current_wait = 5m` and `cumulative_wait = 0m`.
+     2. In each round, poll for comments.
+     3. If NO new comments are found:
+        - If `cumulative_wait + current_wait > 30m`, stop polling and notify the user.
+        - Otherwise, wait for `current_wait`, then update `cumulative_wait += current_wait` and `current_wait += 1m`, and repeat from step 2.
+     4. If new comments are found:
+        - Reset `current_wait = 5m` and `cumulative_wait = 0m` for the next review cycle, and proceed to Apply feedback.
+     - Example Sequence:
+       - Poll #1: No comments. Wait 5m (`current_wait`). `cumulative_wait` = 5m. Next `current_wait` = 6m.
+       - Poll #2: No comments. Wait 6m (`current_wait`). `cumulative_wait` = 11m. Next `current_wait` = 7m.
+       - Poll #3: No comments. Wait 7m (`current_wait`). `cumulative_wait` = 18m. Next `current_wait` = 8m.
+       - Poll #4: No comments. Wait 8m (`current_wait`). `cumulative_wait` = 26m. Next `current_wait` = 9m.
+       - Poll #5: No comments. Stop because `cumulative_wait + current_wait` (26m + 9m) > 30m.
 7. Apply feedback
    - Group comments by file/area, fix, commit, push.
 8. Notify
