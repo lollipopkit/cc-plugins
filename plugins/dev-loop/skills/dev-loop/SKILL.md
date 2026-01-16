@@ -63,6 +63,7 @@ Notifications (optional):
 
 1. Fetch issue context
    - Use `gh issue view` or `gh pr view` to get title/body and current status.
+   - If NO issue identifier is provided, or if on a non-base branch, try to find an associated PR for the current branch using `gh pr list --head $(git branch --show-current) --json number,url,title,body`.
 2. Create branch
    - Check if the current branch is the base branch (e.g. `main`).
    - If NOT on the base branch, verify if the current branch is already associated with the target issue/PR.

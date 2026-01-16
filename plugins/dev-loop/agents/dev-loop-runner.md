@@ -71,6 +71,7 @@ Workflow (repeat until completion or blocked):
 
 1. Gather inputs
    - Identify repo/root and issue identifier.
+   - If NO issue identifier is provided, or if on a non-base branch, use `gh pr list --head $(git branch --show-current) --json number,url,title,body` to find an associated PR.
    - Capture target base branch (default `main`).
 2. Create or resume branch
    - If a PR already exists for this issue, check out its branch.

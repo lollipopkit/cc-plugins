@@ -11,6 +11,7 @@ Behavior:
 
 1. Determine the issue source:
    - If the argument looks like a GitHub URL or issue/PR number, use `gh` to fetch title/body, labels, repo, and existing PR linkage.
+   - If NO argument is provided, or if starting on a non-base branch, use `gh pr list --head $(git branch --show-current) --json number,url,title,body` to check for an existing PR associated with the current branch.
    - If the argument looks like a local file path, read it and treat it as the issue/task description.
    - Otherwise, treat it as a free-form text task.
 2. Read settings from `.claude/dev-loop.local.md` if present.
