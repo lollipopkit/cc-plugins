@@ -63,7 +63,7 @@ Notifications (optional):
 1. Fetch/Create issue context
    - Use `gh issue view` or `gh pr view` to get title/body and current status.
    - If NO issue identifier is provided (only free-form text or a local file):
-     - Check if the user wants to track this in a new GitHub issue.
+     - Prompt the user to confirm if they want to track this in a new GitHub issue.
      - If yes, use `gh issue create --title "<summary>" --body "<description>"` to create it.
    - If on a non-base branch and no issue is provided, try to find an associated PR for the current branch using `gh pr list --head $(git branch --show-current) --json number,url,title,body`.
 2. Create branch
@@ -90,11 +90,11 @@ Notifications (optional):
        query($name: String!, $owner: String!, $pr: Int!) {
          repository(owner: $owner, name: $name) {
            pullRequest(number: $pr) {
-             reviewThreads(first: 50) {
+             reviewThreads(first: 100) {
                nodes {
                  isOutdated
                  isResolved
-                 comments(last: 10) {
+                 comments(last: 20) {
                    nodes {
                      body
                      path

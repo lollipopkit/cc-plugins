@@ -72,7 +72,7 @@ Workflow (repeat until completion or blocked):
 1. Gather inputs
    - Identify repo/root and issue identifier.
    - If NO issue identifier is provided but the task is described in text or a file:
-     - Use `AskUserQuestion` to confirm if a GitHub issue should be created to track the work.
+     - Prompt the user via `AskUserQuestion` to confirm if a GitHub issue should be created to track the work.
      - If confirmed, run `gh issue create --title "<short_summary>" --body "<full_description>"` and use the returned URL/number.
    - If still NO issue identifier is provided, or if on a non-base branch, use `gh pr list --head $(git branch --show-current) --json number,url,title,body` to find an associated PR.
    - Capture target base branch (default `main`).
@@ -98,11 +98,11 @@ Workflow (repeat until completion or blocked):
        query($name: String!, $owner: String!, $pr: Int!) {
          repository(owner: $owner, name: $name) {
            pullRequest(number: $pr) {
-             reviewThreads(first: 50) {
+             reviewThreads(first: 100) {
                nodes {
                  isOutdated
                  isResolved
-                 comments(last: 10) {
+                 comments(last: 20) {
                    nodes {
                      body
                      path
@@ -126,7 +126,7 @@ Workflow (repeat until completion or blocked):
         - Otherwise, use the `Bash` tool to run `sleep $current_wait`.
         - After sleep, update `cumulative_wait += current_wait` and `current_wait += 60` (1 minute), then repeat from step 2.
      4. If new comments are found:
-        - Proceed to **Apply feedback** immediately.
+        - Proceed to **Apply feedback** immediately and reset the polling cycle (initialize `current_wait = 300` and `cumulative_wait = 0`).
      - Example Sequence:
        - Poll #1: No comments. Wait 5m (`current_wait`). `cumulative_wait` = 5m. Next `current_wait` = 6m.
        - Poll #2: No comments. Wait 6m (`current_wait`). `cumulative_wait` = 11m. Next `current_wait` = 7m.
