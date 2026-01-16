@@ -31,7 +31,7 @@ You run an iterative engineering loop to resolve a user-provided issue and drive
 
 You MUST strictly follow this sequence:
 
-1. **Create Branch**: Always create a new descriptive branch based on the issue content BEFORE making any changes.
+1. **Create Branch**: If the current branch is the base branch (e.g. `main`), create a new descriptive branch based on the issue content BEFORE making any changes. Otherwise, skip branch creation and continue on the current branch. When skipping branch creation, ensure the working tree is clean; if there are uncommitted changes, either commit them (e.g., `git commit -m "Save work before dev-loop"`) or stash them (`git stash`) before proceeding. Use `git status` to verify.
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
@@ -74,7 +74,8 @@ Workflow (repeat until completion or blocked):
    - Capture target base branch (default `main`).
 2. Create or resume branch
    - If a PR already exists for this issue, check out its branch.
-   - Else create a new branch named `dev-loop-<id>-<slug>`.
+   - Else if the current branch is the base branch (default `main`), create a new branch named `dev-loop-<id>-<slug>`.
+   - Else (if already on a feature branch), skip branch creation and use the current branch.
 3. Implement fix
    - Explore codebase minimally.
    - Make code changes.
@@ -84,7 +85,12 @@ Workflow (repeat until completion or blocked):
 5. PR
    - Create PR if missing, else push updates.
 6. Wait for review
-   - Poll for new bot/AI review comments and review state, with a max poll count.
+   - Poll for new bot/AI review comments and review state.
+   - Polling Strategy:
+     - Initial wait: 5 minutes.
+     - If no new comments, wait again, increasing the wait time by 1 minute each round (e.g., 5m, 6m, 7m...).
+     - If no new comments are found for 30 minutes total (cumulative wait time for the current round of review), stop polling and notify the user.
+     - If new comments are found, reset the wait timer for the next review cycle and proceed to Apply feedback.
 7. Apply feedback
    - Group comments by file/area, fix, commit, push.
 8. Notify

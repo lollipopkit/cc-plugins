@@ -8,7 +8,7 @@ Run an iterative workflow that takes an issue/task input and drives it to a merg
 
 ## Mandatory Workflow
 
-1. **Create Branch**: Always start by creating a new descriptive branch based on the issue/task content.
+1. **Create Branch**: If on the base branch (e.g. `main`), create a new descriptive branch based on the issue/task content. Otherwise, continue on the current branch.
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
@@ -59,7 +59,8 @@ Notifications (optional):
 1. Fetch issue context
    - Use `gh issue view` or `gh pr view` to get title/body and current status.
 2. Create branch
-   - Create a descriptive branch name.
+   - If the current branch is the base branch, create a descriptive branch name and check it out.
+   - Otherwise, skip this step.
 3. Implement minimal fix
    - Read only necessary files.
    - Avoid refactors not required for the fix.
@@ -71,6 +72,11 @@ Notifications (optional):
    - Use `gh pr create` with a structured body: Summary + Test plan.
 7. Wait for AI review
    - Poll `gh pr view` / `gh api` for new comments, review state, and check runs.
+   - Polling Strategy:
+     - Start with 5 minutes wait.
+     - Increase wait time by 1 minute each round if no new comments are found.
+     - If no new comments appear for 30 minutes total for the current review cycle, stop and exit.
+     - If new comments are found, solve them and reset the polling strategy for the next cycle.
 8. Apply feedback
    - Address comments in the smallest changeset.
    - If feedback looks wrong or out-of-scope, ask the user.

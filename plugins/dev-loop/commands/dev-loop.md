@@ -18,7 +18,7 @@ Behavior:
 
 Rules:
 
-- Always start by creating a new branch based on the issue content.
+- Create a new branch based on the issue content ONLY if the current branch is the base branch (e.g. `main`).
 - Avoid destructive operations.
 - If review comments request changes that look incorrect or out-of-scope, ask the user before proceeding.
 - Prefer using `gh` for GitHub workflows when available.
