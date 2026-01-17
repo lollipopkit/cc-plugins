@@ -90,14 +90,17 @@ Workflow (repeat until completion or blocked):
      - **Branch Sanitization**: Ensure the `<slug>` is derived from the issue title by converting it to lowercase, replacing spaces and special characters with hyphens, and removing consecutive hyphens.
    - Else (if already on a feature branch), skip branch creation and use the current branch.
 3. Implement fix
-   - Explore codebase minimally.
+   - **Delegate Implementation**: Use the `Task` tool to invoke `devloop-implementer`. Provide the issue description and context.
+     - *Instruction*: "Research and implement the smallest correct fix for: [Issue Description]"
+   - **Delegate Validation**: After implementation, use the `Task` tool to invoke `devloop-validator`.
+     - *Instruction*: "Validate the changes made to resolve: [Issue Description]. Run relevant tests and report results."
+   - If validation fails, repeat the Implementation/Validation sub-tasks (up to 3 times) before asking the user for guidance.
    - If the working tree is dirty:
      - First run `git status` to identify uncommitted changes.
      - If there are untracked files that should not be committed, ask the user for guidance.
      - Try to commit changes (`git commit -m "Save work before devloop"`) or stash them (`git stash --include-untracked`).
      - If the operation fails (e.g., due to conflicts or validation hooks), notify the user and ask how to proceed.
-   - Make code changes.
-   - Run the smallest relevant tests.
+   - (Skip direct implementation in the main agent context; it is now delegated).
 4. Commit
    - Create a commit message derived from issue title.
 5. PR
@@ -170,7 +173,10 @@ Workflow (repeat until completion or blocked):
        - Poll #4: No comments. Wait 15m (`current_wait`). `cumulative_wait` = 29m. Next `current_wait` = 15m.
        - Poll #5: No comments. Stop because `cumulative_wait + current_wait` (29m + 15m) > 30m.
 7. Apply feedback
-   - Group comments by file/area, fix, commit, push.
+   - **Delegate Implementation**: Use the `Task` tool to invoke `devloop-implementer` with the review comments.
+     - *Instruction*: "Apply the following feedback from PR review: [Comments Summary]"
+   - **Delegate Validation**: Use the `Task` tool to invoke `devloop-validator` to ensure feedback was addressed correctly and no regressions were introduced.
+   - Commit and push changes once validated.
 8. Notify
    - If configured, send IM notification on completion, failure, or each review round.
 
