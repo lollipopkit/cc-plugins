@@ -1,6 +1,6 @@
 [English](README.md) | 简体中文
 
-# dev-loop
+# devloop
 
 一个 Claude Code 插件，用于把一个 issue/任务以“循环迭代”的方式推进到可合并的 PR：
 
@@ -16,22 +16,22 @@
 
 ```bash
 /plugin marketplace add lollipopkit/cc-plugins
-/plugin install dev-loop@lk-ccp
+/plugin install devloop@lk-ccp
 ```
 
 ## 组件
 
-- Command：`commands/dev-loop.md` (工作流定义)
-- Agent：`agents/dev-loop-runner.md`
+- Command：`commands/devloop.md` (工作流定义)
+- Agent：`agents/devloop-runner.md`
 - Commands：
-  - `/dev-loop`：启动或继续该工作流
-  - `/dev-loop-enable`：创建/更新 `.claude/dev-loop.local.md`
+  - `/devloop`：启动或继续该工作流
+  - `/devloop-enable`：创建/更新 `.claude/devloop.local.md`
 - Hook：
   - `hooks/hooks.json`：Stop hook，可通过用户提供的命令模板发送 IM 通知
 
 ## 配置
 
-在你的项目根目录创建 `.claude/dev-loop.local.md`。
+在你的项目根目录创建 `.claude/devloop.local.md`。
 
 最小模板：
 
@@ -58,5 +58,5 @@ notify_on_stop: true
 notify_command_template: ""      # executed with selected shell; can reference env vars below
 ---
 
-这里可以写给 dev-loop 的额外说明。
+这里可以写给 devloop 的额外说明。
 ```

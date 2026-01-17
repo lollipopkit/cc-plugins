@@ -4,13 +4,13 @@ set -euo pipefail
 # Stop hook notification runner.
 #
 # Executes a user-provided notification command template from
-# `.claude/dev-loop.local.md` when `notify_enabled: true`.
+# `.claude/devloop.local.md` when `notify_enabled: true`.
 #
 # This script intentionally allows arbitrary user-configured commands.
 # Keep it gated behind explicit opt-in flags in the settings file.
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-SETTINGS_FILE="$PROJECT_DIR/.claude/dev-loop.local.md"
+SETTINGS_FILE="$PROJECT_DIR/.claude/devloop.local.md"
 
 if [[ ! -f "$SETTINGS_FILE" ]]; then
   exit 0
@@ -43,24 +43,24 @@ def s(v):
 def export(name, value):
     print(f"export {name}={shlex.quote(s(value))}")
 
-export("DEV_LOOP_EVENT_NAME", data.get("hook_event_name", ""))
-export("DEV_LOOP_REASON", data.get("reason", ""))
-export("DEV_LOOP_TRANSCRIPT_PATH", data.get("transcript_path", ""))
+export("DEVLOOP_EVENT_NAME", data.get("hook_event_name", ""))
+export("DEVLOOP_REASON", data.get("reason", ""))
+export("DEVLOOP_TRANSCRIPT_PATH", data.get("transcript_path", ""))
 
 raw = json.dumps(data, ensure_ascii=False)
-export("DEV_LOOP_EVENT_JSON_B64", base64.b64encode(raw.encode("utf-8")).decode("ascii"))
+export("DEVLOOP_EVENT_JSON_B64", base64.b64encode(raw.encode("utf-8")).decode("ascii"))
 PY
   )
   # shellcheck disable=SC1090
   eval "$EXPORTS"
 else
-  export DEV_LOOP_EVENT_NAME=""
-  export DEV_LOOP_REASON=""
-  export DEV_LOOP_TRANSCRIPT_PATH="${CLAUDE_TRANSCRIPT_PATH:-}"
-  export DEV_LOOP_EVENT_JSON_B64=""
+  export DEVLOOP_EVENT_NAME=""
+  export DEVLOOP_REASON=""
+  export DEVLOOP_TRANSCRIPT_PATH="${CLAUDE_TRANSCRIPT_PATH:-}"
+  export DEVLOOP_EVENT_JSON_B64=""
 fi
 
-export DEV_LOOP_PROJECT_DIR="$PROJECT_DIR"
+export DEVLOOP_PROJECT_DIR="$PROJECT_DIR"
 
 # Extract YAML frontmatter between the FIRST pair of --- markers.
 #
@@ -103,18 +103,18 @@ fi
 
 # A short default message; templates should prefer structured env vars.
 # Use a separate variable for the unquoted message and one for the shell-quoted version.
-message="dev-loop stop event: ${DEV_LOOP_EVENT_NAME:-Stop} | project: $PROJECT_DIR"
-if [[ -n "${DEV_LOOP_REASON:-}" ]]; then
-  message="$message | reason: ${DEV_LOOP_REASON}"
+message="devloop stop event: ${DEVLOOP_EVENT_NAME:-Stop} | project: $PROJECT_DIR"
+if [[ -n "${DEVLOOP_REASON:-}" ]]; then
+  message="$message | reason: ${DEVLOOP_REASON}"
 fi
-if [[ -n "${DEV_LOOP_TRANSCRIPT_PATH:-}" ]]; then
-  message="$message | transcript: ${DEV_LOOP_TRANSCRIPT_PATH}"
+if [[ -n "${DEVLOOP_TRANSCRIPT_PATH:-}" ]]; then
+  message="$message | transcript: ${DEVLOOP_TRANSCRIPT_PATH}"
 fi
-export DEV_LOOP_MESSAGE="$message"
+export DEVLOOP_MESSAGE="$message"
 # Provide a pre-quoted version for safer use in templates.
 # Declare and assign separately to avoid masking exit status (SC2155).
-DEV_LOOP_MESSAGE_QUOTED="'$(echo "$message" | sed "s/'/'\\\\''/g")'"
-export DEV_LOOP_MESSAGE_QUOTED
+DEVLOOP_MESSAGE_QUOTED="'$(echo "$message" | sed "s/'/'\\\\''/g")'"
+export DEVLOOP_MESSAGE_QUOTED
 
 run_with_shell() {
   local shell_name="$1"
@@ -141,7 +141,7 @@ case "${notify_shell:-auto}" in
     ;;
   auto|*)
     if [[ -n "${notify_shell:-}" && "${notify_shell}" != "auto" && "${notify_shell}" != "bash" && "${notify_shell}" != "fish" ]]; then
-      echo "dev-loop-notify: unsupported notify_shell='${notify_shell}'; falling back to auto (bash then fish)" >&2
+      echo "devloop-notify: unsupported notify_shell='${notify_shell}'; falling back to auto (bash then fish)" >&2
     fi
 
     if command -v bash >/dev/null 2>&1; then

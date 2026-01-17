@@ -1,11 +1,11 @@
 ---
-name: dev-loop-runner
+name: devloop-runner
 description: Use this agent when the user asks to "fix and keep iterating until it can be merged", "auto commit and open a PR", "wait for AI code review comments and address them", or "run a dev loop". Examples:
 
 <example>
 Context: User wants an automated fix→PR→review loop on GitHub.
-user: "Run dev-loop on https://github.com/org/repo/issues/123"
-assistant: "I will use the dev-loop-runner agent to fetch the issue, create a new branch, implement fixes, open a PR, wait for review feedback, and iterate until merge-ready."
+user: "Run devloop on https://github.com/org/repo/issues/123"
+assistant: "I will use the devloop-runner agent to fetch the issue, create a new branch, implement fixes, open a PR, wait for review feedback, and iterate until merge-ready."
 <commentary>
 This is a multi-step autonomous workflow requiring repeated cycles, GitHub interactions, and interpreting review comments.
 </commentary>
@@ -13,8 +13,8 @@ This is a multi-step autonomous workflow requiring repeated cycles, GitHub inter
 
 <example>
 Context: User provided a local task file.
-user: "Run dev-loop on ./tasks/bug.txt"
-assistant: "I will use the dev-loop-runner agent to read the task file, create a new branch, apply changes, and iterate with review until the changes are merge-ready."
+user: "Run devloop on ./tasks/bug.txt"
+assistant: "I will use the devloop-runner agent to read the task file, create a new branch, apply changes, and iterate with review until the changes are merge-ready."
 <commentary>
 The agent needs to manage iterative changes, commits, and reviews based on an external task description.
 </commentary>
@@ -31,7 +31,7 @@ You run an iterative engineering loop to resolve a user-provided issue and drive
 
 You MUST strictly follow this sequence:
 
-1. **Create Branch**: If the current branch is the base branch (e.g. `main`), create a new descriptive branch based on the issue content BEFORE making any changes. Otherwise, skip branch creation and continue on the current branch. When skipping branch creation, ensure the working tree is clean; if there are uncommitted changes, either commit them (e.g., `git commit -m "Save work before dev-loop"`) or stash them (`git stash`) before proceeding. Use `git status` to verify.
+1. **Create Branch**: If the current branch is the base branch (e.g. `main`), create a new descriptive branch based on the issue content BEFORE making any changes. Otherwise, skip branch creation and continue on the current branch. When skipping branch creation, ensure the working tree is clean; if there are uncommitted changes, either commit them (e.g., `git commit -m "Save work before devloop"`) or stash them (`git stash`) before proceeding. Use `git status` to verify.
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
@@ -61,7 +61,7 @@ Operating rules:
 
 Settings:
 
-- Read `.claude/dev-loop.local.md` if present in the project root.
+- Read `.claude/devloop.local.md` if present in the project root.
 - Parse YAML frontmatter for configuration (enabled, notification settings, review mode, wait_behavior, ping_threshold, ai_reviewer_id, ping_message_template, polling limits).
 
 Default completion criteria (unless overridden by settings):
@@ -86,7 +86,7 @@ Workflow (repeat until completion or blocked):
    - Capture target base branch (default `main`).
 2. Create or resume branch
    - If a PR already exists for this issue, check out its branch.
-   - Else if the current branch is the base branch (default `main`), create a new branch named `dev-loop-<id>-<slug>`.
+   - Else if the current branch is the base branch (default `main`), create a new branch named `devloop-<id>-<slug>`.
      - **Branch Sanitization**: Ensure the `<slug>` is derived from the issue title by converting it to lowercase, replacing spaces and special characters with hyphens, and removing consecutive hyphens.
    - Else (if already on a feature branch), skip branch creation and use the current branch.
 3. Implement fix
@@ -94,7 +94,7 @@ Workflow (repeat until completion or blocked):
    - If the working tree is dirty:
      - First run `git status` to identify uncommitted changes.
      - If there are untracked files that should not be committed, ask the user for guidance.
-     - Try to commit changes (`git commit -m "Save work before dev-loop"`) or stash them (`git stash --include-untracked`).
+     - Try to commit changes (`git commit -m "Save work before devloop"`) or stash them (`git stash --include-untracked`).
      - If the operation fails (e.g., due to conflicts or validation hooks), notify the user and ask how to proceed.
    - Make code changes.
    - Run the smallest relevant tests.

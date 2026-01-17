@@ -1,6 +1,6 @@
 English | [简体中文](README.zh-CN.md)
 
-# dev-loop
+# devloop
 
 A Claude Code plugin that drives a task/issue to a merge-ready PR through an iterative loop:
 
@@ -16,22 +16,22 @@ A Claude Code plugin that drives a task/issue to a merge-ready PR through an ite
 
 ```bash
 /plugin marketplace add lollipopkit/cc-plugins
-/plugin install dev-loop@lk-ccp
+/plugin install devloop@lk-ccp
 ```
 
 ## Components
 
-- Command: `commands/dev-loop.md` (Workflow definition)
-- Agent: `agents/dev-loop-runner.md`
+- Command: `commands/devloop.md` (Workflow definition)
+- Agent: `agents/devloop-runner.md`
 - Commands:
-  - `/dev-loop` – start or resume the workflow
-  - `/dev-loop-enable` – create/update `.claude/dev-loop.local.md`
+  - `/devloop` – start or resume the workflow
+  - `/devloop-enable` – create/update `.claude/devloop.local.md`
 - Hook:
   - `hooks/hooks.json` – Stop hook that can send IM notifications using a user-provided command template
 
 ## Configuration
 
-Create `.claude/dev-loop.local.md` in your project root.
+Create `.claude/devloop.local.md` in your project root.
 
 Minimal template:
 
@@ -58,5 +58,5 @@ notify_on_stop: true
 notify_command_template: ""      # executed with selected shell; can reference env vars below
 ---
 
-Additional instructions for dev-loop can go here.
+Additional instructions for devloop can go here.
 ```
