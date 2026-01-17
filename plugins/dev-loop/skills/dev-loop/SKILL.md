@@ -17,9 +17,10 @@ Run an iterative workflow that takes an issue/task input and drives it to a merg
 2. **Implement Fix**: Research and implement the smallest correct fix.
 3. **Commit**: Create a clear commit message.
 4. **Pull Request**: Open a PR for review.
-5. **Wait for Review**: Poll for AI or human review comments.
+5. **Wait for Review**: Poll for AI or human review comments and PR mergeability status.
 6. **Address Feedback**: Apply changes based on review comments and commit/push again.
-7. **Repeat**: Iterate through cycles of review and feedback until the PR is approved or merged.
+7. **Repeat**: Iterate through cycles of review and feedback until the PR is approved and mergeable, or merged.
+Once approved and mergeable, notify the user.
 
 ## Inputs
 
@@ -87,6 +88,7 @@ Notifications (optional):
    - If the issue is from GitHub, include `Closes #<issue-number>` or the issue URL in the PR body to link them.
 7. Wait for AI review
    - Poll `gh api graphql` for new comments and review state.
+   - Use `gh pr view --json mergeable,reviewDecision` to check if the PR is ready for merge.
    - Use GraphQL to filter out outdated and resolved comments:
 
      ```bash
