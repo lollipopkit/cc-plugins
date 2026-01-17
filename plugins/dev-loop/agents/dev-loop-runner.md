@@ -98,6 +98,8 @@ Workflow (repeat until completion or blocked):
 6. Wait for review
    - Poll for new bot/AI review comments, review state, and mergeability status.
    - Use `gh pr view --json mergeable,reviewDecision` to check if the PR is ready for merge.
+     - Valid `mergeable` values: `MERGEABLE` (ready), `CONFLICTING` (needs manual fix), `UNKNOWN` (calculating, poll again).
+     - Valid `reviewDecision` values: `APPROVED`, `CHANGES_REQUESTED`, `REVIEW_REQUIRED`.
    - Use GraphQL to filter out outdated and resolved comments to ensure you only address active feedback:
 
      ```bash
