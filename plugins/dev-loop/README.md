@@ -21,7 +21,7 @@ A Claude Code plugin that drives a task/issue to a merge-ready PR through an ite
 
 ## Components
 
-- Command: `commands/dev-loop.md` (Workflow definition)
+- Command: `commands/dev-loop.md` (Workflow definition, consolidated from SKILL.md)
 - Agent: `agents/dev-loop-runner.md`
 - Commands:
   - `/dev-loop` – start or resume the workflow

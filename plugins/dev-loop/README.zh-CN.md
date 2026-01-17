@@ -21,7 +21,7 @@
 
 ## 组件
 
-- Command：`commands/dev-loop.md` (工作流定义)
+- Command：`commands/dev-loop.md` (工作流定义，由 SKILL.md 合并而来)
 - Agent：`agents/dev-loop-runner.md`
 - Commands：
   - `/dev-loop`：启动或继续该工作流
