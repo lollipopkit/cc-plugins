@@ -86,21 +86,25 @@ Workflow (repeat until completion or blocked):
 2. Create or resume branch
    - If a PR already exists for this issue, check out its branch.
    - Else if the current branch is the base branch (default `main`), create a new branch named `dev-loop-<id>-<slug>`.
+     - **Branch Sanitization**: Ensure the `<slug>` is derived from the issue title by converting it to lowercase, replacing spaces and special characters with hyphens, and removing consecutive hyphens.
    - Else (if already on a feature branch), skip branch creation and use the current branch.
 3. Implement fix
    - Explore codebase minimally.
+   - If the working tree is dirty, either commit the changes (`git commit -m "Save work before dev-loop"`) or stash them (`git stash`) before starting.
    - Make code changes.
    - Run the smallest relevant tests.
 4. Commit
    - Create a commit message derived from issue title.
 5. PR
    - Create PR if missing, else push updates.
+   - Use `gh pr view --json isDraft,mergeable,reviewDecision` to check status.
    - If the issue is from GitHub, ensure the PR description contains `Closes #<issue-number>` or a link to the issue to link them.
 6. Wait for review
    - Poll for new bot/AI review comments, review state, and mergeability status.
-   - Use `gh pr view --json mergeable,reviewDecision` to check if the PR is ready for merge.
+   - Use `gh pr view --json isDraft,mergeable,reviewDecision` to check if the PR is ready for merge.
      - Valid `mergeable` values: `MERGEABLE` (ready), `CONFLICTING` (needs manual fix), `UNKNOWN` (calculating, poll again).
      - Valid `reviewDecision` values: `APPROVED`, `CHANGES_REQUESTED`, `REVIEW_REQUIRED`.
+     - If `isDraft` is `true`, notify the user that the PR is a draft and may not receive reviews until marked as ready.
    - Use GraphQL to filter out outdated and resolved comments to ensure you only address active feedback:
 
      ```bash
@@ -129,32 +133,33 @@ Workflow (repeat until completion or blocked):
      ```
 
    - Polling Strategy (Autonomous):
-     1. Initialize `current_wait = 60` (1 minute), `cumulative_wait = 0`, and `wait_rounds_without_response = 0`.
+     **IMPORTANT**: You MUST remain in this polling loop autonomously. DO NOT exit the agent, DO NOT ask the user for permission to wait, and DO NOT wait for user input between rounds. Use the `Bash` tool to `sleep` and then immediately perform the next poll.
+
+     1. Initialize `current_wait = 120` (2 minutes), `cumulative_wait = 0`, `wait_rounds_without_response = 0`, and `pings_sent = 0`.
      2. **Validation**: If `wait_behavior` is `ping_ai`:
         - Ensure `ai_reviewer_id` is set. If not, log a warning and fall back to `wait_behavior = "poll"`.
         - Ensure `ping_threshold` is at least 1. If not, default it to 3.
      3. In each round, poll for comments using the GraphQL query.
      4. If NO new comments are found:
         - Increment `wait_rounds_without_response`.
-        - If `wait_behavior` is `ping_ai` and `wait_rounds_without_response` >= `ping_threshold`:
+        - If `wait_behavior` is `ping_ai`, `wait_rounds_without_response` >= `ping_threshold`, and `pings_sent` < 2:
           - Post a comment to the PR:
             1. Interpolate the `ping_message_template` by replacing `{{ai_id}}` with `ai_reviewer_id`.
             2. Use `gh pr comment --body "$MESSAGE"` where `$MESSAGE` is the interpolated content, ensuring proper shell quoting/escaping (e.g. using a heredoc or body file if the message contains special characters).
-          - Reset `wait_rounds_without_response = 0` to avoid repeated pings.
+          - Increment `pings_sent` and reset `wait_rounds_without_response = 0`.
         - If `cumulative_wait + current_wait > 1800` (30 minutes), stop polling and ask the user for guidance.
-        - Otherwise, use the `Bash` tool to run `sleep $current_wait`.
-        - After sleep, update `cumulative_wait += current_wait` and `current_wait += 60` (1 minute), then repeat from step 2.
+        - Otherwise, use the `Bash` tool to run `sleep $current_wait`. You MUST NOT exit after this; you MUST continue to the next iteration of this loop.
+        - After sleep, update `cumulative_wait += current_wait`.
+        - Update `current_wait`: Use exponential backoff by doubling `current_wait` each round (e.g., 2m, 4m, 8m...), capped at 900 (15 minutes).
+        - Repeat from step 2.
      5. If new comments are found:
-        - Proceed to **Apply feedback** immediately and reset the polling cycle (initialize `current_wait = 60`, `cumulative_wait = 0`, and `wait_rounds_without_response = 0`).
+        - Proceed to **Apply feedback** immediately and reset the polling cycle (initialize `current_wait = 120`, `cumulative_wait = 0`, `wait_rounds_without_response = 0`, and `pings_sent = 0`).
      6. Example Sequence:
-       - Poll #1: No comments. Wait 1m (`current_wait`). `cumulative_wait` = 1m. Next `current_wait` = 2m.
-       - Poll #2: No comments. Wait 2m (`current_wait`). `cumulative_wait` = 3m. Next `current_wait` = 3m.
-       - Poll #3: No comments. Wait 3m (`current_wait`). `cumulative_wait` = 6m. Next `current_wait` = 4m.
-       - Poll #4: No comments. Wait 4m (`current_wait`). `cumulative_wait` = 10m. Next `current_wait` = 5m.
-       - Poll #5: No comments. Wait 5m (`current_wait`). `cumulative_wait` = 15m. Next `current_wait` = 6m.
-       - Poll #6: No comments. Wait 6m (`current_wait`). `cumulative_wait` = 21m. Next `current_wait` = 7m.
-       - Poll #7: No comments. Wait 7m (`current_wait`). `cumulative_wait` = 28m. Next `current_wait` = 8m.
-       - Poll #8: No comments. Stop because `cumulative_wait + current_wait` (28m + 8m) > 30m.
+       - Poll #1: No comments. Wait 2m (`current_wait`). `cumulative_wait` = 2m. Next `current_wait` = 4m.
+       - Poll #2: No comments. Wait 4m (`current_wait`). `cumulative_wait` = 6m. Next `current_wait` = 8m.
+       - Poll #3: No comments. Wait 8m (`current_wait`). `cumulative_wait` = 14m. Next `current_wait` = 15m (capped).
+       - Poll #4: No comments. Wait 15m (`current_wait`). `cumulative_wait` = 29m. Next `current_wait` = 15m.
+       - Poll #5: No comments. Stop because `cumulative_wait + current_wait` (29m + 15m) > 30m.
 7. Apply feedback
    - Group comments by file/area, fix, commit, push.
 8. Notify
