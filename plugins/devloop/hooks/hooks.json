@@ -1,5 +1,5 @@
 {
-  "description": "Dev-loop notifications and completion tracking",
+  "description": "Devloop notifications and completion tracking",
   "hooks": {
     "Stop": [
       {

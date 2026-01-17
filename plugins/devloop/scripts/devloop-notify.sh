@@ -111,10 +111,6 @@ if [[ -n "${DEVLOOP_TRANSCRIPT_PATH:-}" ]]; then
   message="$message | transcript: ${DEVLOOP_TRANSCRIPT_PATH}"
 fi
 export DEVLOOP_MESSAGE="$message"
-# Provide a pre-quoted version for safer use in templates.
-# Declare and assign separately to avoid masking exit status (SC2155).
-DEVLOOP_MESSAGE_QUOTED="'$(echo "$message" | sed "s/'/'\\\\''/g")'"
-export DEVLOOP_MESSAGE_QUOTED
 
 run_with_shell() {
   local shell_name="$1"
