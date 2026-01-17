@@ -1,11 +1,11 @@
 ---
-name: dev-loop
-description: Start or resume the dev-loop workflow (create branch → fix → commit → PR → wait for AI review → apply comments → repeat).
+name: devloop
+description: Start or resume the devloop workflow (create branch → fix → commit → PR → wait for AI review → apply comments → repeat).
 allowed-tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "AskUserQuestion", "TodoWrite", "Task"]
 argument-hint: "--issue <github-url|number|text|file> [--base main]"
 ---
 
-Run the dev-loop workflow using the plugin components in this plugin. This command drives a task to a merge-ready pull request through repeated cycles.
+Run the devloop workflow using the plugin components in this plugin. This command drives a task to a merge-ready pull request through repeated cycles.
 
 ## Mandatory Workflow
 
@@ -29,7 +29,7 @@ Run the dev-loop workflow using the plugin components in this plugin. This comma
    - If the argument looks like a local file path, read it and treat it as the issue/task description.
    - Otherwise, treat it as a free-form text task.
    - For cases where a text task or local file is provided and no GitHub issue exists, the agent will offer to create one to track the work.
-2. **Read settings** from `.claude/dev-loop.local.md` if present. Supported fields in YAML frontmatter:
+2. **Read settings** from `.claude/devloop.local.md` if present. Supported fields in YAML frontmatter:
    - `enabled: true|false`
    - `base_branch: "main"`
    - `review_mode: "github"|"local-agent"|"custom"`
@@ -43,7 +43,7 @@ Run the dev-loop workflow using the plugin components in this plugin. This comma
    - `notify_shell: "auto"|"bash"|"fish"`
    - `notify_on_stop: true|false`
    - `notify_command_template: "..."`
-3. **Invoke the loop agent** `dev-loop-runner` to execute the full fix/review cycle.
+3. **Invoke the loop agent** `devloop-runner` to execute the full fix/review cycle.
 
 ## Rules & Safety
 

@@ -1,5 +1,5 @@
 {
-  "name": "dev-loop",
+  "name": "devloop",
   "version": "1.0.3",
   "description": "Iterate until ready to merge: create branch, fix, commit, open PR, wait for AI review, apply feedback, repeat.",
   "author": {

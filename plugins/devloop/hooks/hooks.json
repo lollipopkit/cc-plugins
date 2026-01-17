@@ -1,5 +1,5 @@
 {
-  "description": "Dev-loop notifications and completion tracking",
+  "description": "Devloop notifications and completion tracking",
   "hooks": {
     "Stop": [
       {
@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PLUGIN_ROOT/scripts/dev-loop-notify.sh\"",
+            "command": "bash \"$CLAUDE_PLUGIN_ROOT/scripts/devloop-notify.sh\"",
             "timeout": 20
           }
         ]
