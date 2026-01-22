@@ -2,7 +2,7 @@
 name: devloop
 description: Start or resume the devloop workflow (create branch → fix → commit → PR → wait for AI review → apply comments → repeat).
 allowed-tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "AskUserQuestion", "TodoWrite", "Task", "Skill"]
-argument-hint: "--issue <github-url|number|text|file> [--base main]"
+argument-hint: "--issue <github-url|number|feishu/lark-url|text|file> [--base main]"
 ---
 
 Run the devloop workflow using the plugin components in this plugin. This command drives a task to a merge-ready pull request through repeated cycles.
@@ -25,6 +25,7 @@ Run the devloop workflow using the plugin components in this plugin. This comman
 1. **Determine the issue source**:
 
    - If the argument looks like a GitHub URL or issue/PR number, use `gh` to fetch title/body, labels, repo, and existing PR linkage.
+   - If the argument looks like a Feishu/Lark Project issue URL or identifier, fetch the issue title/body via the Feishu/Lark Project API (requires local environment credentials) and use that as the task description.
    - When NO argument is provided, or if starting on a non-base branch, use `gh pr list --head $(git branch --show-current) --json number,url,title,body` to check for an existing PR associated with the current branch.
    - Should NO argument be provided and NO existing PR is found, the agent will prompt for a task description or offer to create a new issue.
    - If the argument looks like a local file path, read it and treat it as the issue/task description.
