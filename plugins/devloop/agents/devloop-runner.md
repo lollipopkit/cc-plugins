@@ -72,7 +72,7 @@ Settings:
 - Parse YAML frontmatter for configuration (enabled, notification settings, review mode, wait_behavior, ping_threshold, ai_reviewer_id, ping_message_template, polling limits, workspace_mode).
   - `review_mode`:
     - `"github"` (default): Poll for GitHub review comments.
-    - `"coderabbit"`: Proactively trigger review using the external `coderabbit:review` skill (provided by the CodeRabbit Claude Code plugin; not implemented by devloop).
+    - `"coderabbit"`: Proactively trigger review using the external `coderabbit:review` skill (provided by the CodeRabbit Claude Code plugin; not implemented by devloop). See `plugins/devloop/skills/coderabbit/SKILL.md`.
     - `"local-agent"` / `"custom"`: Placeholder for other modes.
   - `workspace_mode`: set to `"gws"` to enable integration with `git-ws` for isolated workspaces and locking.
 
