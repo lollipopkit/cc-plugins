@@ -41,8 +41,6 @@ enabled: true
 base_branch: "main"
 
 # Review behavior
-review_mode: "github"   # github|custom
-custom_review_skill: ""  # 可选；例如 "coderabbit:review"
 max_review_polls: 40
 review_poll_seconds: 60
 

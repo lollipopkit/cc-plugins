@@ -19,9 +19,7 @@ argument-hint: "--issue <github-url|number|feishu/lark-url|text|file> [--base ma
 - **开发周期**：将实施任务委托给 `devloop-implementer`，将验证任务委托给 `devloop-validator`。
 - **审查循环**：
   - **轮询审查**：等待 PR 状态更改和审查评论。
-  - **审查策略**：遵循设置中的 `review_mode`。
-    - `github`（默认）：使用 `scripts/devloop-pr-review-threads.sh` 轮询评论。
-    - `custom`：在每个周期触发特定的技能（例如 `coderabbit:review`）或脚本。
+  - **审查策略**：使用 `scripts/devloop-pr-review-threads.sh` 轮询评论。
   - **处理反馈**：自动针对新评论实施修复并重新验证。
 - **完成**：当 PR 获得批准且 `mergeable` 状态为 `MERGEABLE` 时停止。
 

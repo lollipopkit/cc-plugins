@@ -21,12 +21,6 @@ allowed-tools: ["Read", "Write", "Edit", "AskUserQuestion"]
 enabled: true
 base_branch: "main"
 
-# 审查策略
-# "github": 使用 scripts/devloop-pr-review-threads.sh 轮询 GitHub 审查评论
-# "custom": 在每个周期触发特定的技能（例如 coderabbit:review）
-review_mode: "github"
-custom_review_skill: "" # 仅在 review_mode 为 "custom" 时使用
-
 # 轮询与等待行为
 max_review_polls: 40
 review_poll_seconds: 60
@@ -51,5 +45,4 @@ workspace_mode: "local" # "local" 或 "gws" (用于 git-ws 隔离工作区)
 - 指定代码风格或架构限制。
 ```
 
-1. 询问用户关键字段的值（`review_mode`、`wait_behavior`、`notify_enabled` 等）以自定义模板。
-2. 提醒钩子 (hook) 配置在会话开始时加载；需要重启 Claude Code 才能使钩子更改生效。
+- 提醒钩子 (hook) 配置在会话开始时加载；需要重启 Claude Code 才能使钩子更改生效。

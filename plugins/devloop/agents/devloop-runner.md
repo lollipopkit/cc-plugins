@@ -83,12 +83,7 @@ tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "AskUserQuestion", "Tod
 设置：
 
 - 如果项目根目录存在 `.claude/devloop.local.md`，请读取它。
-- 解析 YAML 前置内容 (frontmatter) 以获取配置（enabled、通知设置、审查模式、等待行为、提醒阈值、AI 审查者 ID、提醒消息模板、轮询限制、工作区模式）。
-  - `review_mode`：
-    - `"github"`（默认）：轮询 GitHub 审查评论。
-    - `"custom"`：在每个轮询周期使用用户提供的审查技能（通过 `custom_review_skill`）。
-      - 示例：`custom_review_skill: "coderabbit:review"`（需要 CodeRabbit 插件）。
-  - `workspace_mode`：设置为 `"gws"` 以启用与 `git-ws` 的集成，实现隔离的工作区和锁定。
+- 解析 YAML 前置内容 (frontmatter) 以获取配置（enabled、通知设置、等待行为、提醒阈值、AI 审查者 ID、提醒消息模板、轮询限制、工作区模式）。
 
 默认完成标准（除非被设置覆盖）：
 
@@ -165,10 +160,6 @@ tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "AskUserQuestion", "Tod
      2. **验证**：如果 `wait_behavior` 是 `ping_ai`：
         - 确保 `ping_threshold` 至少为 1。如果不是，默认为 3。
      3. **审查轮次**：
-        - 如果 `review_mode` 为 `"custom"` 且设置了 `custom_review_skill`：
-          - 在每个轮询周期开始时触发一次 `custom_review_skill`。
-          - 如果 Skill 调用失败（未安装、未授权或出错），继续进行标准的 GitHub 轮询。
-          - 如果审查发现了问题，将其视为新的审查反馈并进入 **应用反馈** 步骤（跳过本轮剩余的轮询步骤）。
         - 轮询新的机器人/AI 审查评论、审查状态和合并状态。
         - 使用 `gh pr view --json isDraft,mergeable,reviewDecision` 检查 PR 是否准备好合并。
           - 有效的 `mergeable` 值：`MERGEABLE`（就绪）、`CONFLICTING`（需要手动修复）、`UNKNOWN`（计算中，再次轮询）。
