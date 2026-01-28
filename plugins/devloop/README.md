@@ -48,7 +48,6 @@ review_poll_seconds: 60
 
 # 等待审查行为
 wait_behavior: "poll"   # poll|ping_ai
-ai_reviewer_id: ""
 ping_message_template: "@{{ai_id}} 此 PR 正在等待审查反馈。您可以提供更新吗？"
 ping_threshold: 3       # 提醒前的等待轮数 (最小为 1)
 

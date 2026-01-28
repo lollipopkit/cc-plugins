@@ -163,7 +163,6 @@ tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "AskUserQuestion", "Tod
 
      1. 初始化 `current_wait = 120`（2 分钟）、`cumulative_wait = 0`、`wait_rounds_without_response = 0` 和 `pings_sent = 0`。
      2. **验证**：如果 `wait_behavior` 是 `ping_ai`：
-        - 确保设置了 `ai_reviewer_id`。如果没有，记录警告并回退到 `wait_behavior = "poll"`。
         - 确保 `ping_threshold` 至少为 1。如果不是，默认为 3。
      3. **审查轮次**：
         - 如果 `review_mode` 为 `"custom"` 且设置了 `custom_review_skill`：
@@ -188,7 +187,7 @@ tools: ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "AskUserQuestion", "Tod
         - 递增 `wait_rounds_without_response`。
         - 如果 `wait_behavior` 为 `ping_ai`、`wait_rounds_without_response` >= `ping_threshold` 且 `pings_sent` < 2：
           - 在 PR 上发布评论：
-            1. 通过将 `{{ai_id}}` 替换为 `ai_reviewer_id` 来插值 `ping_message_template`。
+            1. 通过将 `{{ai_id}}` 替换为 参与了评论的AI的id 来插值 `ping_message_template`。
             2. 使用 `gh pr comment --body "$MESSAGE"`，其中 `$MESSAGE` 是插值后的内容，确保正确的 shell 引用/转义（例如如果消息包含特殊字符，使用 heredoc 或正文文件）。
           - 递增 `pings_sent` 并重置 `wait_rounds_without_response = 0`。
         - 如果 `cumulative_wait + current_wait > 1800`（30 分钟），停止轮询并询问用户指导。

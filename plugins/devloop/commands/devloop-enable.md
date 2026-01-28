@@ -31,7 +31,6 @@ custom_review_skill: "" # 仅在 review_mode 为 "custom" 时使用
 max_review_polls: 40
 review_poll_seconds: 60
 wait_behavior: "poll" # "poll" 或 "ping_ai"
-ai_reviewer_id: "" # 例如 "coderabbitai[bot]"
 ping_threshold: 3 # 提醒前的等待轮数
 ping_message_template: "@{{ai_id}} 此 PR 正在等待审查反馈。您可以提供更新吗？"
 
@@ -39,7 +38,7 @@ ping_message_template: "@{{ai_id}} 此 PR 正在等待审查反馈。您可以�
 notify_enabled: false
 notify_shell: "auto" # "auto"、"bash" 或 "fish"
 notify_on_stop: true
-notify_command_template: "curl -d \"$DEVLOOP_MESSAGE\" ntfy.sh/your-topic" # ntfy 模板示例
+notify_command_template: "curl -d \"$DEVLOOP_MESSAGE\" ntfy.sh/your-topic" # ntfy 模板示例，你还可以使用 bark 等
 
 # 环境
 workspace_mode: "local" # "local" 或 "gws" (用于 git-ws 隔离工作区)
