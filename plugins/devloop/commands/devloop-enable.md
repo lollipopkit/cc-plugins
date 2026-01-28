@@ -1,31 +1,48 @@
 ---
 name: devloop-enable
-description: Quickly enable devloop for this repo by creating or updating `.claude/devloop.local.md`.
+description: 通过创建或更新 `.claude/devloop.local.md` 快速为该仓库启用 devloop。
 allowed-tools: ["Read", "Write", "Edit", "AskUserQuestion"]
 ---
 
-Enable devloop for the current project.
+为当前项目启用 devloop。
 
-Steps:
+步骤：
 
-1. Ensure a `.claude/` directory exists in the project root.
-2. If `.claude/devloop.local.md` exists, update frontmatter keys:
-   - `enabled: true`
-3. If it does not exist, create it with a minimal template and safe defaults.
-4. Ask user for:
-   - `review_mode` (github|coderabbit|local-agent|custom, default: `github`)
-   - `wait_behavior` (poll|ping_ai, default: `poll`)
-   - If `wait_behavior` is `ping_ai`:
-     - `ai_reviewer_id` (e.g., `coderabbitai`)
-     - `ping_message_template` (default: `@{{ai_id}} This PR is awaiting review feedback. Could you provide an update?`)
-     - `ping_threshold` (number of wait rounds with no response before pinging, default: 3)
-   - `notify_enabled` (true/false)
-   - If `notify_enabled` is true, ask for the notification method/template:
-     - Provide common examples like `ntfy` (e.g., `curl -d "$DEVLOOP_MESSAGE" ntfy.sh/topic`), `Bark`, or custom scripts.
-   - `notify_command_template` (optional)
-   - `notify_shell` (auto|bash|fish)
-5. Remind that hook config is loaded at session start; restart Claude Code for hook changes to take effect.
+1. 确保项目根目录存在 `.claude/` 目录。
+2. 如果 `.claude/devloop.local.md` 已存在，更新前置内容 (frontmatter) 中的键。
+3. 如果不存在，使用综合模板创建它。
 
-Notes:
+## 推荐模板结构
 
-- `notify_command_template` may reference `$DEVLOOP_MESSAGE` and `$DEVLOOP_EVENT_JSON_B64`.
+在创建或更新 `.claude/devloop.local.md` 时，推荐使用以下结构：
+
+```markdown
+---
+enabled: true
+base_branch: "main"
+
+# 轮询与等待行为
+max_review_polls: 40
+review_poll_seconds: 60
+wait_behavior: "poll" # "poll" 或 "ping_ai"
+ping_threshold: 3 # 提醒前的等待轮数
+ping_message_template: "@{{ai_id}} 此 PR 正在等待审查反馈。您可以提供更新吗？"
+
+# 通知
+notify_enabled: false
+notify_shell: "auto" # "auto"、"bash" 或 "fish"
+notify_on_stop: true
+notify_command_template: "curl -d \"$DEVLOOP_MESSAGE\" ntfy.sh/your-topic" # ntfy 模板示例，你还可以使用 bark 等
+
+# 环境
+workspace_mode: "local" # "local" 或 "gws" (用于 git-ws 隔离工作区)
+---
+
+# Devloop 项目指南
+
+- 在此处添加项目特定的开发规则。
+- 定义首选的测试命令（例如 "更改后运行 `npm test`"）。
+- 指定代码风格或架构限制。
+```
+
+- 提醒钩子 (hook) 配置在会话开始时加载；需要重启 Claude Code 才能使钩子更改生效。
