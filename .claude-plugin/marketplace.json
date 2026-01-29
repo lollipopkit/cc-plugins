@@ -16,6 +16,16 @@
       "name": "devloop",
       "source": "./plugins/devloop",
       "description": "Iterate on an issue until it is ready to merge: create branch, fix, commit, open PR, wait for AI review, apply feedback, repeat."
+    },
+    {
+      "name": "context-firewall",
+      "source": "./plugins/context-firewall",
+      "description": "preprocess large inputs using sub-agents, return compressed and auditable results with evidence locators, and verify claims at low cost."
+    },
+    {
+      "name": "gws-manager",
+      "source": "./plugins/gws-manager",
+      "description": "Manage parallel development workspaces and advisory locks using the gws CLI tool"
     }
   ]
 }
