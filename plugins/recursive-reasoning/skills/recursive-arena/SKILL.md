@@ -1,52 +1,52 @@
 ---
 name: recursive-arena
-description: Orchestrates recursive iterations using the multi-model battle as the generator each round. Use when user wants recursive refinement plus model battles, multi-LLM consensus, or says "recursive arena".
+description: Combine recursive outer-loop refinement with multi-model arena generation each round. Use when users request recursive arena, multi-LLM consensus with iterative refinement, or recursive plus model-battle workflows.
 allowed-tools: Read, Bash(python:*)
 ---
 
-# Recursive-Arena Orchestrator
+# Recursive-Arena
 
-This skill composes two skills:
-
-- `multi-model`: generates candidate answers by rotating models and collecting judge feedback.
-- `recursive`: provides the macro-loop structure (decompose → critique → reflect → refine → converge).
-
-## Core behavior
-
-For each recursive iteration:
-
-1. Call the multi-model script to produce the best candidate for the current prompt.
-2. Treat the multi-model best answer as the iteration’s `Current Solution`.
-3. Use multi-model judge summaries as the primary input to `Self-Critique` and to update `Reflection Memory`.
-4. If not converged, refine the prompt (or add constraints) and run the next iteration.
+Use the orchestrator:
+`python3 "${CLAUDE_PLUGIN_ROOT}/skills/recursive-arena/scripts/recursive_arena.py"`.
 
 ## How to run
 
-This orchestrator uses the multi-model runner bundled in this plugin:
-
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/recursive-arena/scripts/recursive_arena.py" --prompt "<your task>" --iters 4 --arena-iters 3
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/recursive-arena/scripts/recursive_arena.py" \
+  --prompt "<task>" --iters 4 --arena-iters 3 --json
 ```
+
+Common flags: `--max-judges`, `--temperature`, `--max-tokens`, `--timeout`.
+
+## Iteration Loop
+
+For each outer iteration:
+
+1. Run `multi-model` to generate a best candidate.
+2. Use judge summaries as critique input.
+3. Refine the prompt with the current best answer.
+4. Keep the global best by score and continue.
 
 ## Configuration
 
-Multi-model configuration is read from `.env` (same rules as the `multi-model` skill):
+Reuses `multi-model` `.env` configuration:
 
-- `ARENA_MODELS`, `ARENA_OPENAI_BASE_URL` / provider variants.
+- `ARENA_MODELS`
+- `ARENA_OPENAI_BASE_URL` or `ARENA_PROVIDER_<NAME>_BASE_URL`
+- Optional API keys (`ARENA_OPENAI_API_KEY`, `ARENA_PROVIDER_<NAME>_API_KEY`)
 
 Optional orchestration env:
 
-- `RLM_ARENA_ARENA_ITERS` default for multi-model per outer iteration
+- `RLM_ARENA_ARENA_ITERS` default inner arena iterations
 - `RLM_ARENA_MAX_JUDGES` default judge cap
 
-## Output
+## Output and Safety
 
-- The final answer is the best outer-iteration result.
-- Show an evolution summary table with:
-  - Iteration number
-  - Writer model ID used by arena winner (numeric ID only)
-  - Average judge score
-  - Key refinement applied
-
-Never disclose provider/model names; only numeric IDs.
-Never print secrets from `.env`.
+- Final answer is the best outer-iteration result.
+- When useful, show a compact evolution table:
+  - `iteration`
+  - `winner_model_id` (numeric ID only)
+  - `avg_judge_score`
+  - `refinement_applied`
+- Never disclose provider/model names.
+- Never print secrets from `.env`.

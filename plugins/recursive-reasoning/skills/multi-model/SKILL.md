@@ -1,70 +1,46 @@
 ---
 name: multi-model
-description: Multi-model battle for iterative (recursive) refinement. Rotates models every iteration and has other models judge/critique. Use when user asks to "battle models", "compare models", "multi-LLM", or wants iterative refinement across multiple OpenAI-compatible / Ollama models.
+description: Run multi-model battle with rotating writer and judge models via OpenAI-compatible endpoints. Use when users ask to battle or compare models, run multi-LLM critique, or iteratively improve an answer across models.
 allowed-tools: Read, Bash(python:*)
 ---
 
-# Multi-Model Skill
+# Multi-Model
 
-Run a multi-model “battle” loop where:
+Use the bundled runner:
+`python3 "${CLAUDE_PLUGIN_ROOT}/skills/multi-model/scripts/multi_model.py"`.
 
-- Each iteration uses a different model (rotating by index).
-- The active model produces a candidate answer.
-- Other models judge and critique it.
-- The process keeps the best-scoring answer as the current best.
+## Required Setup
 
-## Configuration (.env)
+The script searches upward from the current working directory for `.env`.
 
-This skill reads `.env` (searching upward from the current working directory) to find multi-model config.
+Required variables:
 
-### Single-endpoint setup (OpenAI-compatible)
+- `ARENA_MODELS`
+- Either `ARENA_OPENAI_BASE_URL` (single endpoint) or `ARENA_PROVIDER_<NAME>_BASE_URL` (multi-provider)
+- Optional keys: `ARENA_OPENAI_API_KEY`, `ARENA_PROVIDER_<NAME>_API_KEY`
 
-- `ARENA_OPENAI_BASE_URL` (e.g. `http://localhost:11434/v1` for Ollama, or `https://api.openai.com/v1`)
-- `ARENA_OPENAI_API_KEY` (optional for Ollama)
-- `ARENA_MODELS` (comma-separated model names)
+Single-endpoint example:
 
-Example:
-
-```env
-ARENA_OPENAI_BASE_URL=http://localhost:11434/v1
-ARENA_OPENAI_API_KEY=
-ARENA_MODELS=qwen3:8b,deepseek-r1:14b
-```
-
-### Multi-provider setup (optional)
-
-- `ARENA_MODELS=provider:model,provider:model2,...`
-- `ARENA_PROVIDER_<PROVIDER>_BASE_URL=...`
-- `ARENA_PROVIDER_<PROVIDER>_API_KEY=...`
-
-Example:
-
-```env
-ARENA_MODELS=ollama:qwen3:8b,openai:gpt-4o-mini
-ARENA_PROVIDER_OLLAMA_BASE_URL=http://localhost:11434/v1
-ARENA_PROVIDER_OLLAMA_API_KEY=
-ARENA_PROVIDER_OPENAI_BASE_URL=https://api.openai.com/v1
-ARENA_PROVIDER_OPENAI_API_KEY=YOUR_KEY
-```
+`ARENA_MODELS=qwen3:8b,deepseek-r1:14b`
 
 ## How to run
 
-1. Ensure `.env` exists and contains the variables above.
-2. Run the multi-model script.
-
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/multi-model/scripts/multi_model.py" --prompt "<your task>" --iters 5
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/multi-model/scripts/multi_model.py" \
+  --prompt "<task>" --iters 5 --max-judges 3 --json
 ```
 
-Options you can use:
+Useful flags: `--out`, `--temperature`, `--max-tokens`, `--timeout`.
 
-- `--iters N`: number of iterations (each iteration rotates the writer model)
-- `--max-judges N`: cap number of judge models per round
-- `--json`: output machine-readable JSON
-- `--out path.json`: save JSON transcript
+## Execution Policy
 
-## Output expectations
+1. Rotate writer model by iteration.
+2. Let other models judge and score.
+3. Keep the highest average-score answer as current best.
+4. Return best answer, or full transcript with `--json`.
 
-- Treat model identity as an internal numeric ID (`Model 0`, `Model 1`, ...).
-- In any prompts to models, do not disclose provider/model names; only IDs.
-- Never print secrets from `.env` (API keys).
+## Safety Rules
+
+- Never print API keys or secret values from `.env`.
+- Refer to model identity only as numeric IDs (`Model 0`, `Model 1`, ...).
+- Do not expose provider/model names in prompts or user-facing output.
