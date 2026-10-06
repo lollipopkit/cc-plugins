@@ -4,23 +4,13 @@
     "name": "lollipopkit"
   },
   "metadata": {
-    "description": "Marketplace for lk plugins (recursive-reasoning, devloop)"
+    "description": "Marketplace for lk plugins (peer-model)"
   },
   "plugins": [
     {
-      "name": "recursive-reasoning",
-      "source": "./plugins/recursive-reasoning",
-      "description": "Recursive Language Model - multi-pass reasoning with Self-Refine, Reflexion, Tree of Thoughts"
-    },
-    {
-      "name": "devloop",
-      "source": "./plugins/devloop",
-      "description": "Iterate on an issue until it is ready to merge: create branch, fix, commit, open PR, wait for AI review, apply feedback, repeat."
-    },
-    {
-      "name": "context-firewall",
-      "source": "./plugins/context-firewall",
-      "description": "preprocess large inputs using sub-agents, return compressed and auditable results with evidence locators, and verify claims at low cost."
+      "name": "peer-model",
+      "source": "./plugins/peer-model",
+      "description": "Run any Anthropic-compatible model (DeepSeek, GLM, ...) as a peer Claude Code session: optionally fork the current conversation context, then exchange messages via SendMessage."
     }
   ]
 }

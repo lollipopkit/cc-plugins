@@ -1,0 +1,11 @@
+{
+  "name": "peer-model",
+  "version": "0.1.0",
+  "description": "Run any Anthropic-compatible model (DeepSeek, GLM, ...) as a peer Claude Code session: optionally fork the current conversation context, then exchange messages via SendMessage. Profiles live in ~/.config/cc-peer-model/config.toml.",
+  "author": {
+    "name": "lollipopkit"
+  },
+  "keywords": ["multi-model", "peer", "session", "messaging", "deepseek"],
+  "repository": "https://github.com/lollipopkit/cc-plugins",
+  "license": "MIT"
+}

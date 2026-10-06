@@ -34,8 +34,7 @@ All plugins follow a standard directory layout:
 
 ### Core Plugins
 
-- `dev-loop`: Automates the software development lifecycle (branch -> fix -> commit -> PR -> review).
-- `recursive-reasoning`: Implements advanced reasoning patterns (Master/Sub-Agent, Tree of Thoughts, Reflexion).
+- `peer-model`: Spawns a configured model as a background peer session (`claude --bg`, optional `--resume --fork-session` for context) and communicates via built-in `SendMessage`. Profiles: `~/.config/cc-peer-model/config.toml`.
 
 ### Design Patterns
 

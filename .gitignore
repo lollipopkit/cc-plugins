@@ -4,4 +4,3 @@ __pycache__/
 # Claude Code local config/state
 .claude/*.local.md
 .claude/*.local.json
-.claude/context-firewall/

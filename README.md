@@ -2,13 +2,11 @@ English | [简体中文](README.zh-CN.md)
 
 # Claude Code Plugins
 
-GPT 5.2 / Claude 4.5 Opus is recommended for the best experience.
+Claude 5.5 Opus is recommended for the best experience.
 
 ## Plugins
 
-- `recursive-reasoning`: Recursive Reasoning Engine - multi-pass reasoning with Self-Refine, Reflexion, Tree of Thoughts.
-- `devloop`: Iterate on an issue until it is ready to merge: create branch, fix, commit, open PR, wait for AI review, apply feedback, repeat.
-- `context-firewall`: Use sub-agents to preprocess large inputs into auditable, compressed results with evidence locators (Map-Reduce + verification).
+- `peer-model`: Run any Anthropic-compatible model (DeepSeek, GLM, ...) as a peer Claude Code session, optionally inheriting the current conversation context, with two-way messaging via `SendMessage`. Profiles are configured in `~/.config/cc-peer-model/config.toml`.
 
 ## Usage
 

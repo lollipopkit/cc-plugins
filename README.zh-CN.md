@@ -2,13 +2,11 @@
 
 # Claude Code 插件
 
-建议使用 GPT 5.2 / Claude 4.5 Opus 获得最佳体验。
+建议使用 Claude 5.5 Opus 获得最佳体验。
 
 ## 插件列表
 
-- `recursive-reasoning`: 递归推理引擎 - 通过 Self-Refine、Reflexion、Tree of Thoughts 实现多轮推理。
-- `devloop`: 对一个 issue 进行迭代，直到准备好合并：创建分支、修复、提交、打开 PR、等待 AI 审查、应用反馈、重复。
-- `context-firewall`: 使用子代理预处理大输入，输出可审计的压缩结论（带证据 locator），并支持 Map-Reduce + 低成本抽样复核。
+- `peer-model`: 以 peer session 方式运行任意 Anthropic 兼容模型（DeepSeek、GLM 等），可继承当前对话上下文，并通过 `SendMessage` 双向通信。profile 配置在 `~/.config/cc-peer-model/config.toml`。
 
 ## 使用方法
 
