@@ -27,6 +27,12 @@ max_context_tokens = 1000000    # optional
 env = { API_TIMEOUT_MS = "600000" }  # optional, non-secret only
 ```
 
+`claude --bg` runs the peer in a process spawned by the Claude Code daemon, so the caller's environment never reaches it. `peer.py` therefore passes the profile via `--settings`: non-secret values in `env`, the key via `apiKeyHelper`, which runs inside the peer session:
+
+- `api_key_cmd`: an argv list (e.g. a macOS keychain lookup), run in the session. Works regardless of how the daemon was started.
+- `api_key_env`: the variable is read in the session, i.e. from the daemon's environment. It works only if the daemon was started from a shell that exports it (e.g. via the shell profile); a daemon started from Claude Desktop, an IDE or launchd will not have it.
+- A literal `api_key` is refused.
+
 Never write secrets into the config or echo resolved values.
 
 ## 1. Spawn

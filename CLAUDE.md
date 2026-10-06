@@ -13,7 +13,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Linting & Formatting
 
-- Markdown linting: Ensure compliance with `.markdownlint.json` (disables MD013 and MD041).
 - No standard build or test commands exist at the root; development is done by testing plugins live in Claude Code.
 
 ## Architecture & Code Structure

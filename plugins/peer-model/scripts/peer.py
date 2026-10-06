@@ -7,7 +7,10 @@ $CC_PEER_MODEL_CONFIG or ${XDG_CONFIG_HOME:-~/.config}/cc-peer-model/config.toml
 """
 
 import argparse
+import json
 import os
+import re
+import shlex
 import stat
 import subprocess
 import sys
@@ -17,9 +20,15 @@ from pathlib import Path
 EXAMPLE = """\
 # Profiles for the peer-model Claude Code plugin.
 # Secrets never go in this file: reference an env var or a command instead.
+#
+# The key is read inside the peer session (via apiKeyHelper), which runs
+# under the Claude Code daemon, not under the shell that calls peer.py:
+#   api_key_cmd: argv run in the session, e.g. a keychain lookup. Works anywhere.
+#   api_key_env: env var read in the session; it must be set in the daemon's
+#                environment (e.g. exported by your login shell profile).
 
 [profiles.ds]
-base_url_env = "PIMM_BASE_URL"     # or: base_url = "https://example.com/anthropic"
+base_url_env = "PIMM_BASE_URL"     # or: base_url = "https://..." / base_url_cmd = [...]
 api_key_env = "PIMM_API_KEY"       # or: api_key_cmd = ["security", "find-generic-password", "-s", "pimm", "-w"]
 model = "deepseek-v4.1-flash"
 max_context_tokens = 1000000
@@ -28,7 +37,8 @@ max_context_tokens = 1000000
 """
 
 # The caller's session identity and messaging credentials must not leak
-# into the child; a first-party API key would override the auth token.
+# into the client process (or a daemon it may start); a first-party API key
+# would take precedence over apiKeyHelper.
 STRIP_ENV = (
     "CLAUDE_CODE_SESSION_ID",
     "CLAUDE_CODE_MESSAGING_SOCKET",
@@ -65,7 +75,7 @@ def load_profiles() -> dict:
 
 
 def resolve(profile: dict, key: str) -> str:
-    """Read `key` literally, from `<key>_env`, or from `<key>_cmd` stdout."""
+    """Read a non-secret `key` literally, from `<key>_env`, or from `<key>_cmd` stdout."""
     if v := profile.get(key):
         return str(v)
     if env := profile.get(f"{key}_env"):
@@ -80,6 +90,30 @@ def resolve(profile: dict, key: str) -> str:
             die(f"{key}_cmd failed (exit {r.returncode})")
         return r.stdout.strip()
     die(f"profile needs one of {key} / {key}_env / {key}_cmd")
+
+
+def api_key_helper(profile: dict) -> str:
+    """Build an apiKeyHelper shell command that yields the key inside the session.
+
+    `claude --bg` runs the session in a process spawned by the daemon, so the
+    caller's environment never reaches it, and putting the key in argv or a
+    settings file would expose it. The helper is evaluated in the session.
+    """
+    if profile.get("api_key"):
+        die("api_key must not be stored in the config; use api_key_cmd or api_key_env")
+    if cmd := profile.get("api_key_cmd"):
+        if not isinstance(cmd, list) or not cmd:
+            die("api_key_cmd must be a non-empty argv list")
+        # Fail early here rather than with an auth error inside the peer.
+        if subprocess.run(cmd, capture_output=True).returncode != 0:
+            die("api_key_cmd failed")
+        return shlex.join(cmd)
+    if var := profile.get("api_key_env"):
+        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", var):
+            die(f"invalid api_key_env {var!r}")
+        msg = shlex.quote(f"peer-model: {var} is not set in the Claude Code daemon environment")
+        return f"printenv {var} || {{ echo {msg} >&2; exit 1; }}"
+    die("profile needs api_key_cmd or api_key_env")
 
 
 def cmd_init(_: argparse.Namespace) -> None:
@@ -104,17 +138,20 @@ def cmd_spawn(a: argparse.Namespace) -> None:
     )
     model = p.get("model") or die(f"profile {a.profile!r} has no model")
 
-    env = {k: v for k, v in os.environ.items() if k not in STRIP_ENV}
-    env.update({k: str(v) for k, v in p.get("env", {}).items()})
+    # `claude --bg` hands the session to the daemon, so per-session config
+    # must travel as --settings; the client's environment does not reach it.
+    session_env = {k: str(v) for k, v in p.get("env", {}).items()}
     # The Anthropic SDK appends /v1/messages itself.
-    env["ANTHROPIC_BASE_URL"] = resolve(p, "base_url").rstrip("/").removesuffix("/v1")
-    env["ANTHROPIC_AUTH_TOKEN"] = resolve(p, "api_key")
+    session_env["ANTHROPIC_BASE_URL"] = resolve(p, "base_url").rstrip("/").removesuffix("/v1")
     for v in MODEL_VARS:
-        env[f"ANTHROPIC_DEFAULT_{v}_MODEL"] = model
+        session_env[f"ANTHROPIC_DEFAULT_{v}_MODEL"] = model
     if mct := p.get("max_context_tokens"):
-        env["CLAUDE_CODE_MAX_CONTEXT_TOKENS"] = str(mct)
+        session_env["CLAUDE_CODE_MAX_CONTEXT_TOKENS"] = str(mct)
+    settings = {"env": session_env, "apiKeyHelper": api_key_helper(p)}
 
-    args = ["claude", "--bg", "-n", a.name, "--permission-mode", a.mode]
+    env = {k: v for k, v in os.environ.items() if k not in STRIP_ENV}
+    args = ["claude", "--bg", "-n", a.name, "--permission-mode", a.mode,
+            "--settings", json.dumps(settings)]
     if a.effort:
         args += ["--effort", a.effort]
     if a.fork:
