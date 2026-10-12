@@ -151,9 +151,10 @@ def cmd_spawn(a: argparse.Namespace) -> None:
 
     env = {k: v for k, v in os.environ.items() if k not in STRIP_ENV}
     # No plan mode: leaving it waits for a person to approve the plan, and a
-    # background session has nobody to answer.
+    # background session has nobody to answer. No subagents or workflows: the
+    # peer does the work itself, on the model it was started with.
     args = ["claude", "--bg", "-n", a.name, "--permission-mode", a.mode,
-            "--disallowedTools", "EnterPlanMode",
+            "--disallowedTools", "EnterPlanMode", "Agent", "Workflow",
             "--settings", json.dumps(settings)]
     if a.effort:
         args += ["--effort", a.effort]
