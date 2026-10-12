@@ -150,7 +150,10 @@ def cmd_spawn(a: argparse.Namespace) -> None:
     settings = {"env": session_env, "apiKeyHelper": api_key_helper(p)}
 
     env = {k: v for k, v in os.environ.items() if k not in STRIP_ENV}
+    # No plan mode: leaving it waits for a person to approve the plan, and a
+    # background session has nobody to answer.
     args = ["claude", "--bg", "-n", a.name, "--permission-mode", a.mode,
+            "--disallowedTools", "EnterPlanMode",
             "--settings", json.dumps(settings)]
     if a.effort:
         args += ["--effort", a.effort]
