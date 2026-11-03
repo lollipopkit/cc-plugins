@@ -22,6 +22,7 @@ If the file is missing, run `peer.py init` to write an example and ask the user 
 [profiles.ds]
 base_url_env = "PIMM_BASE_URL"  # or base_url = "...", or base_url_cmd = [...]
 api_key_env = "PIMM_API_KEY"    # or api_key_cmd = ["security", "find-generic-password", "-s", "pimm", "-w"]
+                                # or api_key_cmd = ["op", "read", "--no-newline", "op://Dev/pimm/password"]
 model = "deepseek-v4.1-flash"
 max_context_tokens = 1000000    # optional
 env = { API_TIMEOUT_MS = "600000" }  # optional, non-secret only
@@ -29,7 +30,7 @@ env = { API_TIMEOUT_MS = "600000" }  # optional, non-secret only
 
 `claude --bg` runs the peer in a process spawned by the Claude Code daemon, so the caller's environment never reaches it. `peer.py` therefore passes the profile via `--settings`: non-secret values in `env`, the key via `apiKeyHelper`, which runs inside the peer session:
 
-- `api_key_cmd`: an argv list (e.g. a macOS keychain lookup), run in the session. Works regardless of how the daemon was started.
+- `api_key_cmd`: an argv list (e.g. a macOS keychain or 1Password `op read` lookup), run in the session. Works regardless of how the daemon was started; 1Password asks to authorize each process tree that reads, so it may prompt whenever the session refreshes the key.
 - `api_key_env`: the variable is read in the session, i.e. from the daemon's environment. It works only if the daemon was started from a shell that exports it (e.g. via the shell profile); a daemon started from Claude Desktop, an IDE or launchd will not have it.
 - A literal `api_key` is refused.
 

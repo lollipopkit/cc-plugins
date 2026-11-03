@@ -23,13 +23,15 @@ EXAMPLE = """\
 #
 # The key is read inside the peer session (via apiKeyHelper), which runs
 # under the Claude Code daemon, not under the shell that calls peer.py:
-#   api_key_cmd: argv run in the session, e.g. a keychain lookup. Works anywhere.
+#   api_key_cmd: argv run in the session, e.g. a keychain or 1Password lookup. Works anywhere
+#                (1Password's `op` asks to authorize each process tree that reads).
 #   api_key_env: env var read in the session; it must be set in the daemon's
 #                environment (e.g. exported by your login shell profile).
 
 [profiles.ds]
 base_url_env = "PIMM_BASE_URL"     # or: base_url = "https://..." / base_url_cmd = [...]
 api_key_env = "PIMM_API_KEY"       # or: api_key_cmd = ["security", "find-generic-password", "-s", "pimm", "-w"]
+                                   # or: api_key_cmd = ["op", "read", "--no-newline", "op://Dev/pimm/password"]
 model = "deepseek-v4.1-flash"
 max_context_tokens = 1000000
 # Extra non-secret env vars for the spawned session:
