@@ -31,7 +31,7 @@ EXAMPLE = """\
 [profiles.ds]
 base_url_env = "PIMM_BASE_URL"     # or: base_url = "https://..." / base_url_cmd = [...]
 api_key_env = "PIMM_API_KEY"       # or: api_key_cmd = ["security", "find-generic-password", "-s", "pimm", "-w"]
-                                   # or: api_key_cmd = ["op", "read", "--no-newline", "op://Dev/pimm/password"]
+                                   # or: api_key_cmd = ["op", "read", "--no-newline", "op://Dev/pimm-api-key/credential"]
 model = "deepseek-v4.1-flash"
 max_context_tokens = 1000000
 # Extra non-secret env vars for the spawned session:
